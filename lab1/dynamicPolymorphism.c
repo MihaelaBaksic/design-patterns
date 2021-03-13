@@ -13,17 +13,26 @@ void animalPrintMenu(struct Animal* animal){
 
 struct Animal* createDog(char const* name){
     struct Animal* newDog = malloc(sizeof(struct Animal));
-    newDog->name = name;
-    newDog->functionTable = dogTable;
+    constructDog(newDog, name);
     return newDog;
 }
 
 struct Animal* createCat(char const* name){
     struct Animal* newCat = malloc(sizeof(struct Animal));
-    newCat->name = name;
-    newCat->functionTable = catTable;
+    constructCat(newCat, name);
     return newCat;
 }
+
+void constructDog(struct Animal* dog, char const* name){
+  dog->name = name;
+  dog->functionTable = dogTable;
+}
+
+void constructCat(struct Animal* cat, char const* name){
+  cat->name = name;
+  cat->functionTable = catTable;
+}
+
 
 char const* dogGreet(void){
   return "vau!";
@@ -36,6 +45,15 @@ char const* catGreet(void){
 }
 char const* catMenu(void){
   return "konzerviranu tunjevinu";
+}
+
+
+struct Animal* createNDogs(int n){
+  struct Animal* nDogs = (struct Animal*) malloc(n* sizeof(struct Animal));
+  for(int i=0; i<n; i++){
+    constructDog((nDogs+i), "GenericDoggo");
+  }
+  return nDogs;
 }
 
 
@@ -58,5 +76,17 @@ void testAnimals(void){
 
 int main(void){
     testAnimals();
+
+    //Stack dog creation
+    struct Animal stackDog;
+    constructDog(&stackDog, "StackDoggo");
+    animalPrintGreeting(&stackDog);
+    
+
+    struct Animal* nDogs = createNDogs(N);
+    for(int i=0; i<N; i++){
+      animalPrintGreeting(nDogs+i);
+    }
+
     return 0;
 }
