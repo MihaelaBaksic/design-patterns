@@ -40,7 +40,7 @@ double value_at_linear(Linear*, double);
 
 
 //Unary_Function virtual table
-PTRFUN unary_function_vptr[2] = {&pure_virtual_called, &negative_value_at_unary};
+PTRFUN unary_function_vptr[2] = {NULL, &negative_value_at_unary};
 
 PTRFUN square_vptr[2] = {&value_at_square, &negative_value_at_unary};
 PTRFUN linear_vptr[2] = {&value_at_linear, &negative_value_at_unary};
