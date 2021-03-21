@@ -1,7 +1,7 @@
 #include <iostream>
 
-#pragma pack(push)
-#pragma pack(4) // default is 8
+//#pragma pack(push)
+//#pragma pack(4) // default is 8
 
 class CoolClass{
 public:
@@ -26,4 +26,4 @@ int main(void){
     
 }
 
-#pragma pack(pop)
+//#pragma pack(pop)
