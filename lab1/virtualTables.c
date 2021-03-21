@@ -24,12 +24,6 @@ static int same_functions_for_ints(Unary_Function *f1, Unary_Function *f2, doubl
     return 1;
 };
 
-Unary_Function* Unary_Function_Create(int lb, int ub){
-    Unary_Function *this = (Unary_Function*)malloc(sizeof(Unary_Function));
-    Unary_Function_Construct(this, lb, ub);
-    return this;
-}
-
 //Handles setting of vptr and given arguments
 void Unary_Function_Construct( Unary_Function* this, int lb, int ub){
     this->lower_bound = lb;
