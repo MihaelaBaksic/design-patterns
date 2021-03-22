@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "dynamicPolymorphism.h"
+#include "task1.h"
 
 
 void animalPrintGreeting(struct Animal* animal){

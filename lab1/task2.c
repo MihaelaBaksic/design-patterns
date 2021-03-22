@@ -1,6 +1,6 @@
 #include<stdlib.h>
 #include<stdio.h>
-#include "virtualTables.h"
+#include "task2.h"
 
 double negative_value_at_unary( Unary_Function *this, double x){
     return -(this->vptr[0](this, x));
