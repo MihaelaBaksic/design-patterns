@@ -20,13 +20,13 @@ public class NearestRankPercentileCalculatorTest {
     public void testPercentile(){
         List<Long> elements = Arrays.asList(15L, 20L, 35L, 40L, 50L);
 
-        Long percentile = nearestRankPercentileCalculator.calculate(5, elements);
+        Long percentile = nearestRankPercentileCalculator.calculate(5., elements);
         Assertions.assertEquals(15L, percentile);
 
-        percentile = nearestRankPercentileCalculator.calculate(0, elements);
+        percentile = nearestRankPercentileCalculator.calculate(0., elements);
         Assertions.assertEquals(15L, percentile);
 
-        percentile = nearestRankPercentileCalculator.calculate(100, elements);
+        percentile = nearestRankPercentileCalculator.calculate(100., elements);
         Assertions.assertEquals(50L, percentile);
 
     }
