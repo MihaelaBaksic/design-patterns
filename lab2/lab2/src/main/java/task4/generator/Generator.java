@@ -1,4 +1,4 @@
-package generator;
+package task4.generator;
 
 import java.util.List;
 

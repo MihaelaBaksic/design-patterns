@@ -1,4 +1,6 @@
-import generator.Generator;
+package task4;
+
+import task4.generator.Generator;
 import percentile.PercentileCalculator;
 
 import java.util.List;

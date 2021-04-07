@@ -1,6 +1,5 @@
-package generator;
+package task4.generator;
 
-import generator.FibonacciGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

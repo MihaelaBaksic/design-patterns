@@ -1,4 +1,4 @@
-package generator;
+package task4.generator;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

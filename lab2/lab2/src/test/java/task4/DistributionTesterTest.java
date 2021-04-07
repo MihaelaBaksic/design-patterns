@@ -1,12 +1,11 @@
-import generator.FibonacciGenerator;
-import generator.RandomGenerator;
-import generator.SequentialGenerator;
+import task4.DistributionTester;
+import task4.generator.FibonacciGenerator;
+import task4.generator.RandomGenerator;
+import task4.generator.SequentialGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import percentile.InterpolatedPercentileCalculator;
 import percentile.NearestRankPercentileCalculator;
-
-import java.util.Random;
 
 public class DistributionTesterTest {
 

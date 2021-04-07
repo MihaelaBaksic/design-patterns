@@ -1,6 +1,4 @@
-package generator;
-
-import generator.Generator;
+package task4.generator;
 
 import java.util.ArrayList;
 import java.util.List;
