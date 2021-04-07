@@ -18,18 +18,28 @@ public class Sheet {
         content = content.toUpperCase(Locale.ROOT);
 
         // if cellName already exists in map cells, then update the cell and propagate
-        // the change to all cells holding a reference to it
+        //      the change to all cells holding a reference to it
 
-        // check for circular referencing, if it exists, throw exception
+        // else
+        //      check for circular referencing, if it exists, throw exception
+        //      create new cell and calculate its value
 
-        try{
-            double value = Double.parseDouble(content);
+
+        if( cells.containsKey(cellName) ){
+
+            Double value = evaluate(content);
+            cells.get(cellName).setExp(content, value);
+
+            //update all holding a reference to it
+        }
+        else{
+            //check for circular referencing
+
+            Double value = evaluate(content);
             Cell cell = new Cell(content, value);
             cells.put(cellName, cell);
         }
-        catch (NumberFormatException e){
 
-        }
     }
 
     public Cell cell(String ref){
@@ -52,6 +62,9 @@ public class Sheet {
     private Double evaluate(String exp){
         List<Cell> arguments = getRefs(exp);
 
+        if (arguments.size()==0)
+            return Double.parseDouble(exp);
+
         Double value = 0.;
 
         for(var argument : arguments){
@@ -69,8 +82,19 @@ public class Sheet {
                 .collect(Collectors.toList());
     }
 
-    private boolean checkCircularReferences(Cell cell){
-        return true;
+    private void checkCircularReferences(Cell cell){
+
+        List<Cell> checkedCells = new ArrayList<>();
+        List<Cell> cellsToCheck = new ArrayList<>();
+
+        cellsToCheck.addAll(getRefs(cell.getExp()));
+
+        while(cellsToCheck.size() > 0){
+
+            // bfs
+
+        }
+
     }
 
     private boolean isCellName(String name){
