@@ -1,4 +1,4 @@
-package percentile;
+package task4.percentile;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
