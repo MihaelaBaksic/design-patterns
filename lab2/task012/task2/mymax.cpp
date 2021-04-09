@@ -2,6 +2,7 @@
 #include <vector>
 #include <set>
 #include <assert.h>
+#include <string>
 
 using namespace std;
 
@@ -24,12 +25,12 @@ set<int> set_int = { 1, 3, 5, 7, 4, 6, 9, 2, 0 };
 string arr_str[] = {"mali", "veliki", "nijenajveci"};
 vector<int> vector_empty;
 
-bool gt_int(int t, int o){
-    return t > o;
+bool gt_int(int i1, int i2){
+    return i1 > i2;
 }
 
-bool gt_string(string t, string o){
-    return t > o;
+bool gt_string(string s1, string s2){
+    return s1.compare( s2);
 }
 
 int main(void){
