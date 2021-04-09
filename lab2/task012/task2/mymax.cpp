@@ -2,7 +2,7 @@
 #include <vector>
 #include <set>
 #include <assert.h>
-#include <string>
+#include <string.h>
 
 using namespace std;
 
@@ -22,7 +22,7 @@ Iterator mymax(Iterator first, Iterator last, Predicate pred){
 int arr_int[] = { 1, 3, 5, 7, 4, 6, 9, 2, 0 };
 vector<int> vector_int = { 1, 3, 5, 7, 4, 6, 9, 2, 0 };
 set<int> set_int = { 1, 3, 5, 7, 4, 6, 9, 2, 0 };
-string arr_str[] = {"mali", "veliki", "nijenajveci"};
+string arr_str[] = {"mali", "veliki", "vzki", "nijenajveci"};
 vector<int> vector_empty;
 
 bool gt_int(int i1, int i2){
@@ -30,7 +30,7 @@ bool gt_int(int i1, int i2){
 }
 
 bool gt_string(string s1, string s2){
-    return s1.compare( s2);
+    return s1 > s2;
 }
 
 int main(void){
