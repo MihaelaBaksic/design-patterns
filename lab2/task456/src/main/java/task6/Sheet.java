@@ -1,5 +1,9 @@
 package task6;
 
+import task6.operators.AdditionOperator;
+import task6.operators.Operator;
+import task6.operators.SubtractionOperator;
+
 import java.util.*;
 import java.util.regex.*;
 import java.util.stream.Collectors;
@@ -55,14 +59,15 @@ public class Sheet {
 
     private Double evaluate(String exp){
         List<Cell> arguments = getRefs(exp);
+        List<Operator> operators = getOperators(exp);
 
         if (arguments.size()==0)
             return Double.parseDouble(exp);
 
-        Double value = 0.;
+        Double value = arguments.get(0).getValue();
 
-        for(var argument : arguments){
-            value += argument.getValue();
+        for(int i=1; i<arguments.size(); i++){
+            value = operators.get(i-1).calculate(value, arguments.get(i).getValue());
         }
         return value;
     }
@@ -91,6 +96,16 @@ public class Sheet {
         }
     }
 
+    private List<Operator> getOperators(String exp){
+
+        return Pattern.compile("\\+|-|\\*|/")
+                .matcher(exp)
+                .results()
+                .map(MatchResult::group)
+                .map(o -> mapToOperator(o))
+                .collect(Collectors.toList());
+    }
+
 
     private boolean isCellName(String name){
         return name.matches("^[A-Z]+[1-9]+$");
@@ -108,12 +123,12 @@ public class Sheet {
     }
 
 
-    private void propagateUpdate(Cell cell){
+    private void propagateUpdate(Cell cell) {
 
         List<Cell> cellsToCheck = new ArrayList<>();
         cellsToCheck.addAll(getReferencedBy(cell));
 
-        while(!cellsToCheck.isEmpty()){
+        while (!cellsToCheck.isEmpty()) {
             // Pop the cell from check list
             Cell current = cellsToCheck.get(0);
             cellsToCheck.remove(0);
@@ -123,6 +138,15 @@ public class Sheet {
             current.updateValue(value);
 
             cellsToCheck.addAll(getReferencedBy(current));
+        }
+    }
+
+
+    private Operator mapToOperator(String op){
+        switch (op){
+            case "+": return new AdditionOperator();
+            case "-": return new SubtractionOperator();
+            default: throw new IllegalArgumentException("Unsupported operator");
         }
     }
 
