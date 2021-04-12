@@ -18,7 +18,7 @@ public class InterpolatedPercentileCalculator implements PercentileCalculator{
             if( Math.abs(p-p_i) < 1E-8) // p == p_i
                 return elements.get(i-1);
             else if(p < p_i) {
-                return (long) interpolate(elements.get(i - 2), elements.get(i - 1), p, calcPercentile(i-1, elements.size()), elements.size());
+                return Math.round(interpolate(elements.get(i - 2), elements.get(i - 1), p, calcPercentile(i-1, elements.size()), elements.size()) );
             }
         }
         return elements.get(elements.size()-1);

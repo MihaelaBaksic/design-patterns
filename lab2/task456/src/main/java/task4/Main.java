@@ -25,12 +25,14 @@ public class Main {
         calculators.add(new NearestRankPercentileCalculator());
         calculators.add(new InterpolatedPercentileCalculator());
 
-
+        DistributionTester dt = new DistributionTester(generators.get(0), calculators.get(0));
 
         for(var generator : generators){
             for(var calculator : calculators){
-                DistributionTester dt = new DistributionTester(generator, calculator);
-                dt.generateAndPrint();
+                dt.setGenerator(generator);
+                dt.setCalculator(calculator);
+                dt.generate();
+                dt.calculatePercentile();
             }
         }
 
