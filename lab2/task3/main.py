@@ -1,9 +1,9 @@
-
 def mymax(iterable_, key_=None):
     max_x = None
+    max_key = None
 
     if key_ is None:
-        key_ = lambda element: element
+        key_ = identity
 
     for x in iterable_:
         if max_x is None or key_(x) > max_key:
@@ -13,13 +13,15 @@ def mymax(iterable_, key_=None):
     return max_x
 
 
-if __name__ == '__main__':
-    key = lambda x: len(x)
+def identity(x):
+    return x
 
+
+if __name__ == '__main__':
     array = ['aaaa', 'bs', 'bw', 'sss', 'eeeee', '']
     array_empty = []
 
-    print('Max of {} is {}'.format(array, mymax(array, key)))
+    print('Max of {} is {}'.format(array, mymax(array, lambda x: len(x))))
     print('Max of {} is {}'.format(array, mymax(array)))
 
     d = {'burek': '8', 'buhtla': '5'}
