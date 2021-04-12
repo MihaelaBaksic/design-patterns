@@ -53,7 +53,11 @@ public class Sheet {
 
         return Arrays.stream(exp.split("\\+|-|\\*|/"))
                 .filter(r -> isCellName(r))
-                .map(r -> cell(r))
+                .map(r -> {
+                    if(! cells.containsKey(r))
+                        throw new IllegalArgumentException("Expression cannot reference uninitialized cells. " + r + " is not initialized");
+                    return cell(r);
+                })
                 .collect(Collectors.toList());
     }
 

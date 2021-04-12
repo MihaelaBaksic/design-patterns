@@ -21,6 +21,12 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
+        try{
+            s.set("A2", "A8");
+        }
+        catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
+        }
 
         System.out.println(s.getCells());
     }
