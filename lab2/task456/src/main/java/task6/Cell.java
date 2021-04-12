@@ -1,14 +1,13 @@
 package task6;
 
-import java.util.List;
-
 public class Cell{
 
     private String exp;
     private Double value;
     private String cellName;
 
-    public Cell(String exp, Double value){
+    public Cell(String cellName, String exp, Double value){
+        this.cellName = cellName;
         this.exp = exp;
         this.value = value;
     }
@@ -43,5 +42,11 @@ public class Cell{
             return false;
 
         return this.cellName.equals(((Cell) o).cellName);
+    }
+
+
+    @Override
+    public String toString(){
+        return " [Name:" + cellName + " exp:" + exp + " value:" + value + "]";
     }
 }

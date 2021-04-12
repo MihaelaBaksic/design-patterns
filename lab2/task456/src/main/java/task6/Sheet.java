@@ -12,31 +12,25 @@ public class Sheet {
         this.cells = new HashMap<>();
     }
 
+    public Map<String, Cell> getCells(){ return cells;}
+
     public void set(String cellName, String content){
 
         cellName = cellName.toUpperCase(Locale.ROOT);
         content = content.toUpperCase(Locale.ROOT);
 
-        // if cellName already exists in map cells, then update the cell and propagate
-        //      the change to all cells holding a reference to it
+        assert isCellName(cellName);
 
-        // else
-        //      check for circular referencing, if it exists, throw exception
-        //      create new cell and calculate its value
+        checkCircularReferences(cellName, content);
 
-
+        Double value = evaluate(content);
         if( cells.containsKey(cellName) ){
 
-            Double value = evaluate(content);
             cells.get(cellName).setExp(content, value);
-
-            //update all holding a reference to it
+            propagateUpdate(cells.get(cellName));
         }
         else{
-            //check for circular referencing
-
-            Double value = evaluate(content);
-            Cell cell = new Cell(content, value);
+            Cell cell = new Cell(cellName, content, value);
             cells.put(cellName, cell);
         }
 
@@ -73,36 +67,64 @@ public class Sheet {
         return value;
     }
 
-    private List<String> getOperators(String exp){
 
-        return Pattern.compile("\\+|-|\\*|/")
-                .matcher(exp)
-                .results()
-                .map(MatchResult::group)
-                .collect(Collectors.toList());
-    }
+    private void checkCircularReferences(String cellName, String exp){
 
-    private void checkCircularReferences(Cell cell){
+        //search for cellName in parents of referenced cells
+        List<String> checkedCells = new ArrayList<>();
+        List<Cell> cellsToCheck = getRefs(exp);
 
-        List<Cell> checkedCells = new ArrayList<>();
-        List<Cell> cellsToCheck = new ArrayList<>();
+        while(!cellsToCheck.isEmpty()){
+            //Pop front
+            Cell cell = cellsToCheck.get(0);
+            cellsToCheck.remove(0);
 
-        cellsToCheck.addAll(getRefs(cell.getExp()));
+            if(checkedCells.contains(cell.getCellName()))
+                continue;
 
-        while(cellsToCheck.size() > 0){
+            checkedCells.add(cell.getCellName());
 
-            // bfs
+            if(cell.getCellName().equals(cellName))
+                throw new IllegalArgumentException("Circular references found.");
 
+            cellsToCheck.addAll(getRefs(cell.getExp()));
         }
-
     }
+
 
     private boolean isCellName(String name){
         return name.matches("^[A-Z]+[1-9]+$");
     }
 
     private List<Cell> getReferencedBy(Cell cell){
-        return null;
+
+        List<Cell> referencingCells = new ArrayList<>();
+        for(var c : cells.values()){
+            if (getRefs(c.getExp()).contains(cell)){
+                referencingCells.add(c);
+            }
+        }
+        return referencingCells;
     }
+
+
+    private void propagateUpdate(Cell cell){
+
+        List<Cell> cellsToCheck = new ArrayList<>();
+        cellsToCheck.addAll(getReferencedBy(cell));
+
+        while(!cellsToCheck.isEmpty()){
+            // Pop the cell from check list
+            Cell current = cellsToCheck.get(0);
+            cellsToCheck.remove(0);
+
+            //Update cell
+            Double value = evaluate(current.getExp());
+            current.updateValue(value);
+
+            cellsToCheck.addAll(getReferencedBy(current));
+        }
+    }
+
 
 }
