@@ -10,8 +10,6 @@ public class KeyboardSource implements DataSource{
     public Long getNextNumber() {
         System.out.println("Enter a new positive integer or -1 to terminate");
         long i = scanner.nextLong();
-        if( i < 0)
-            return -1L;
-        return i;
+        return i < 0 ? -1L : i;
     }
 }

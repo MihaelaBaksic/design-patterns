@@ -15,12 +15,16 @@ public class NumberSequence {
 
     private DataSource source;
 
-    private List<Action> observers;
+    private List<Action> actions;
 
     public NumberSequence(DataSource source){
         this.source = source;
         this.numbers = new ArrayList<>();
-        this.observers = new ArrayList<>();
+        this.actions = new ArrayList<>();
+    }
+
+    public void setDataSource(DataSource source){
+        this.source = source;
     }
 
     public void start() throws InterruptedException, IOException {
@@ -34,8 +38,8 @@ public class NumberSequence {
 
             numbers.add(nextNumber);
 
-            for(var observer : observers){
-                observer.update(numbers);
+            for(var action : actions){
+                action.update(numbers);
             }
 
             sleep(1000);
@@ -47,11 +51,15 @@ public class NumberSequence {
         return numbers;
     }
 
+    public void clearNumbers(){
+        numbers.clear();
+    }
+
     public void addAction(Action action){
-        observers.add(action);
+        actions.add(action);
     }
 
     public void removeAction(Action action){
-        observers.remove(action);
+        actions.remove(action);
     }
 }

@@ -16,10 +16,7 @@ public class FileSource implements DataSource{
     public Long getNextNumber() {
         if (scanner.hasNextLong()){
             long i = scanner.nextLong();
-            if (i < 0L)
-                return -1L;
-
-            return i;
+            return i < 0 ? -1L : i;
         }
         return -1L;
     }

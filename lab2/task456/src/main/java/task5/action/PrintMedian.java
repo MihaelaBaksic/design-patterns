@@ -10,7 +10,7 @@ public class PrintMedian implements Action{
 
         assert numbers.size() > 0 : "List must contain at least one element";
 
-        List<Long> sortedNumbers = numbers.stream().sorted().collect(Collectors.toList());
+        numbers = numbers.stream().sorted().collect(Collectors.toList());
 
         Double median = -1.;
 

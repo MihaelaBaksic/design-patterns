@@ -31,6 +31,16 @@ public class Main {
 
         numberSequence.start();
 
+        numberSequence.setDataSource(keyboardSource);
+
+        numberSequence.removeAction(printAvg);
+        numberSequence.removeAction(printMedian);
+        numberSequence.removeAction(outputToFile);
+        numberSequence.clearNumbers();
+
+        numberSequence.start();
+
+
         System.out.println(numberSequence.getNumbers());
 
     }
