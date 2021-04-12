@@ -12,13 +12,14 @@ public class InterpolatedPercentileCalculator implements PercentileCalculator{
         Double p_0 = calcPercentile(1, elements.size());
         if( p < p_0 ) return elements.get(0);
 
-        for(int i=1; i<elements.size(); i++){
+        for(int i=1; i<=elements.size(); i++){
             double p_i = calcPercentile(i, elements.size());
 
             if( Math.abs(p-p_i) < 1E-8) // p == p_i
                 return elements.get(i-1);
-            else if(p < p_i)
-                return (long) interpolate(elements.get(i-2), elements.get(i-1), p, p_i, p_i, elements.size());
+            else if(p < p_i) {
+                return (long) interpolate(elements.get(i - 2), elements.get(i - 1), p, calcPercentile(i-1, elements.size()), elements.size());
+            }
         }
         return elements.get(elements.size()-1);
     }
@@ -27,7 +28,7 @@ public class InterpolatedPercentileCalculator implements PercentileCalculator{
         return 100*(i-0.5)/N;
     }
 
-    private double interpolate(double v_0, double v_1, double p, double p_0, double p_1, double N){
+    private double interpolate(double v_0, double v_1, double p, double p_0, double N){
         return v_0 + N * (p-p_0)*(v_1-v_0) / 100;
     }
 }

@@ -30,4 +30,12 @@ public class NearestRankPercentileCalculatorTest {
         Assertions.assertEquals(50L, percentile);
 
     }
+
+    @Test
+    public void testRandom(){
+        List<Long> elements = Arrays.asList(1l, 10l, 50l);
+        for(int i=10; i<=100; i+=10){
+            System.out.println(nearestRankPercentileCalculator.calculate((double)i, elements));
+        }
+    }
 }

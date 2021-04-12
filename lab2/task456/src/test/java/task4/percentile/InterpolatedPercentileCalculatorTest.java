@@ -33,6 +33,15 @@ public class InterpolatedPercentileCalculatorTest {
     @Test
     public void testGreaterPercentile(){
         List<Long> elements = Arrays.asList(2L, 4L, 7L, 9L, 12L);
-        Assertions.assertEquals(2L, calculator.calculate(91., elements));
+        Assertions.assertEquals(12L, calculator.calculate(91., elements));
     }
+
+    @Test
+    public void testRandom(){
+        List<Long> elements = Arrays.asList(1l, 10l, 50l);
+        for(int i=10; i<=100; i+=10){
+            System.out.println(calculator.calculate((double)i, elements));
+        }
+    }
+
 }
