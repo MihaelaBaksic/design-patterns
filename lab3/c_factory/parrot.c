@@ -1,4 +1,5 @@
-#include "parrots.h"
+#include "parrot.h"
+#include <stdio.h>
 
 Parrot* create(const char* name){
     Parrot* p = (Parrot*) malloc(sizeof(Parrot));
@@ -11,6 +12,9 @@ void construct(Parrot* p, const char* name){
     p->name = name;
 }
 
+const char* name(Parrot* p){
+    return p->name;
+}
 
 const char* greet(){
     return "sqwak";

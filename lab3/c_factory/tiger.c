@@ -1,4 +1,4 @@
-#include "tigers.h"
+#include "tiger.h"
 
 Tiger* create(const char* name){
     Tiger* p = (Tiger*) malloc(sizeof(Tiger));
@@ -11,6 +11,9 @@ void construct(Tiger* p, const char* name){
     p->name = name;
 }
 
+const char* name(Tiger* t){
+    return t->name;
+}
 
 const char* greet(){
     return "rawr";

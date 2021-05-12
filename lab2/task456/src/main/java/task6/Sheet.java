@@ -29,7 +29,6 @@ public class Sheet {
 
         Double value = evaluate(content);
         if( cells.containsKey(cellName) ){
-
             cells.get(cellName).setExp(content, value);
             propagateUpdate(cells.get(cellName));
         }
@@ -37,7 +36,6 @@ public class Sheet {
             Cell cell = new Cell(cellName, content, value);
             cells.put(cellName, cell);
         }
-
     }
 
     public Cell cell(String ref){

@@ -11,8 +11,8 @@ Tiger* create(const char* name);
 
 void construct(Tiger* p, const char* name);
 
-PTRFUN tiger_vtable[2] = {&greet, &menu};
-
+const char* name();
 const char* greet();
-
 const char* menu();
+
+PTRFUN tiger_vtable[3] = {&name, &greet, &menu};

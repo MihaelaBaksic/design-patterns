@@ -11,8 +11,8 @@ Parrot* create(const char* name);
 
 void construct(Parrot* p, const char* name);
 
-PTRFUN parrot_vtable[2] = {&greet, &menu};
-
+const char* name();
 const char* greet();
-
 const char* menu();
+
+PTRFUN parrot_vtable[3] = {&name, &greet, &menu};
