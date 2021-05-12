@@ -16,3 +16,5 @@ const char* greet();
 const char* menu();
 
 PTRFUN parrot_vtable[3] = {&name, &greet, &menu};
+
+int size();

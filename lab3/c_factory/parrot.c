@@ -23,3 +23,7 @@ const char* greet(){
 const char* menu(){
     return "voće";
 }
+
+int size(){
+    return sizeof(Parrot);
+}

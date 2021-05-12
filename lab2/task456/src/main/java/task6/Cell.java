@@ -12,12 +12,11 @@ public class Cell{
         this.value = value;
     }
 
-    public Double getValue(){
-        return value;
-    }
-
     public void updateValue(Double value) {
         this.value = value;
+    }
+    public Double getValue(){
+        return value;
     }
 
     public void setExp(String exp, Double value){
@@ -25,12 +24,12 @@ public class Cell{
         this.value = value;
     }
 
-    public String getCellName(){
-        return cellName;
-    }
-
     public String getExp(){
         return this.exp;
+    }
+
+    public String getCellName(){
+        return cellName;
     }
 
     @Override
@@ -43,7 +42,6 @@ public class Cell{
 
         return this.cellName.equals(((Cell) o).cellName);
     }
-
 
     @Override
     public String toString(){

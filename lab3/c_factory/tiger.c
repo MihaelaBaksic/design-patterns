@@ -22,3 +22,7 @@ const char* greet(){
 const char* menu(){
     return "meso";
 }
+
+int size(){
+    return sizeof(Tiger);
+}
