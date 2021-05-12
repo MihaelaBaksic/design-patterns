@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void* myfactory(char const* libname, char const* ctorarg){
+void myfactory(char const* libname, char const* ctorarg, void* obj_adr){
 
     void* handle;
 
-    void* (*create)(const char*);
+   void (*construct)(void*, const char*);
 
     handle = dlopen(libname, RTLD_NOW);
 
@@ -16,9 +16,28 @@ void* myfactory(char const* libname, char const* ctorarg){
         exit(1);
     }
 
-    create = dlsym(handle, "create");
+    construct = dlsym(handle, "construct");
 
-    void* obj = (*create)(ctorarg);
+    (*construct)(obj_adr, ctorarg);
 
-    return obj;
+}
+
+int getSize(char const* libname){
+
+    void* handle;
+
+    int (*size)();
+
+    handle = dlopen(libname, RTLD_NOW);
+
+
+    if(!handle){
+        printf("Error opening lib\n");
+        exit(1);
+    }
+
+    size = dlsym(handle, "size");
+
+    int struct_size = (*size)();
+    return struct_size;
 }

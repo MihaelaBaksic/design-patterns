@@ -24,10 +24,22 @@ void animalPrintMenu( Animal* a){
 
 
 int main(int argc, char *argv[]){
-  for (int i=1; i<argc; ++i){
-    printf("%s\n", argv[i]);
-    Animal* p=( Animal*)myfactory(argv[i], "Modrobradi");
 
+  for (int i=1; i<argc; i+=2){
+
+    int size = getSize(argv[i]);
+
+    Animal* p;
+
+    if(argv[i+1]=="0"){ // allocate on heap
+      p = (Animal*) malloc(size);
+    }
+    else{ // allocate on stack
+      p = (Animal*) alloca(size);
+    }
+
+    myfactory(argv[i], "Modrobradi", p);
+    
     if (!p){
       printf("Creation of plug-in object %s failed.\n", argv[i]);
       continue;
@@ -35,6 +47,9 @@ int main(int argc, char *argv[]){
 
     animalPrintGreeting(p);
     animalPrintMenu(p);
-    free(p); 
+    
+    if(argv[i+1]=="0"){ // allocated on heap
+      free((void*)p);
+    }
   }
 }
