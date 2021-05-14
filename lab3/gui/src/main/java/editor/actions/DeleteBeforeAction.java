@@ -11,6 +11,9 @@ public class DeleteBeforeAction extends AbstractAction {
 
     public DeleteBeforeAction(TextEditorModel model){
         this.model = model;
+
+        model.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("BACK_SPACE"),"deleteBefore");
+        model.getActionMap().put("deleteBefore", this);
     }
 
     @Override

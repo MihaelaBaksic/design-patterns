@@ -1,14 +1,11 @@
 package editor;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class TextEditorModel extends JComponent implements LinesIterable{
-
-    private static final Font font = new Font("Monospaced", Font.PLAIN, 12);
 
     private List<String> lines;
     private Location cursorLocation;
@@ -21,30 +18,16 @@ public class TextEditorModel extends JComponent implements LinesIterable{
         cursorObservers = new ArrayList<>();
         textObservers = new ArrayList<>();
         cursorLocation = new Location(0,0);
+        selectionRange = new LocationRange();
     }
 
-
-    @Override
-    protected void paintComponent(Graphics g){
-
-        // paint text
-        g.setFont(font);
-        int h = g.getFontMetrics().getHeight();
-        int w = g.getFontMetrics().charWidth('i');
-        Iterator<String> linesIt = lines.iterator();
-        while(linesIt.hasNext()){
-            g.drawString(linesIt.next(), 0, h);
-            h+=h;
-        }
-
-        //paint cursor
-        int asc = g.getFontMetrics().getAscent();
-        h = g.getFontMetrics().getHeight();
-        int diff = Math.abs(h - asc);
-        g.drawLine(cursorLocation.x*w, cursorLocation.y*h + diff, cursorLocation.x*w, (cursorLocation.y+1)*h + diff);
-
+    public Location getCursorLocation(){
+        return cursorLocation;
     }
 
+    public String getLine(int index){
+        return lines.get(index);
+    }
 
     @Override
     public Iterator<String> allLines() {
@@ -127,6 +110,12 @@ public class TextEditorModel extends JComponent implements LinesIterable{
     }
 
     public void deleteBefore(){
+
+        if(selectionRange.isSelected()){
+            deleteRange(this.selectionRange);
+            return;
+        }
+
         if(cursorLocation.x != 0){
             StringBuilder sb = new StringBuilder(lines.get(cursorLocation.y));
             String newLine = sb.deleteCharAt(cursorLocation.x-1).toString();
@@ -156,6 +145,12 @@ public class TextEditorModel extends JComponent implements LinesIterable{
     }
 
     public void deleteAfter(){
+
+        if(selectionRange.isSelected()){
+            deleteRange(this.selectionRange);
+            return;
+        }
+
         if(cursorLocation.x != lines.get(cursorLocation.y).length()){
 
             StringBuilder sb = new StringBuilder(lines.get(cursorLocation.y));
@@ -177,6 +172,27 @@ public class TextEditorModel extends JComponent implements LinesIterable{
     }
     public void deleteRange(LocationRange r){
 
+        if(!r.isSelected())
+            return;
+
+        Location minLocation = r.getMin();
+        Location maxLocation = r.getMax();
+
+        int indexLastLine = maxLocation.y;
+        int indexFirstLine = minLocation.y;
+
+        String firstLine = lines.get(indexFirstLine);
+        String lastLine = lines.get(indexLastLine);
+        String newLine = firstLine.substring(0, minLocation.x) + lastLine.substring(maxLocation.x);
+        lines.set(minLocation.y, newLine);
+
+        while(indexLastLine > indexFirstLine){
+            lines.remove(indexLastLine);
+            indexLastLine--;
+        }
+
+        notifyTextObservers();
+        notifyCursorObservers();
     }
 
     public LocationRange getSelectionRange(){
@@ -185,6 +201,7 @@ public class TextEditorModel extends JComponent implements LinesIterable{
 
     public void setSelectionRange(LocationRange range){
         this.selectionRange = range;
+        notifyCursorObservers();
     }
 
     public void insert(char c){
@@ -204,18 +221,8 @@ public class TextEditorModel extends JComponent implements LinesIterable{
     }
 
 
-    public static class Location{
 
-        public Location(int x, int y){
-            this.x = x;
-            this.y = y;
-        }
-        public int x;
-        public int y;
-    }
 
-    public static class LocationRange{
-        public Location start;
-        public Location end;
-    }
+
+
 }

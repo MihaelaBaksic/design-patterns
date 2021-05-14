@@ -1,41 +1,45 @@
 package editor;
 
 
-import editor.actions.DeleteAfterAction;
-import editor.actions.DeleteBeforeAction;
+import editor.actions.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Iterator;
 
-public class TextEditor extends JFrame implements CursorObserver, TextObserver {
+public class TextEditor extends JPanel implements CursorObserver, TextObserver {
 
     private static final long serialVersionUID = 1L;
+    private static final Font font = new Font("Monospaced", Font.PLAIN, 12);
 
     private Action deleteAfter;
     private Action deleteBefore;
+    private Action selectLeft;
+    private Action selectRight;
+
+    private TextEditorModel model;
 
     public TextEditor(){
         super();
-
-        this.setTitle("TextEditor");
         this.setVisible(true);
-        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         init();
     }
 
     private void init(){
-        this.getContentPane().setLayout(new BorderLayout());
+        this.setLayout(new BorderLayout());
+        this.setFocusable(true);
 
-        TextEditorModel model = new TextEditorModel("Kjduet\nLOLOLOaushaihs asduhsh sshkjieej");
+        model = new TextEditorModel("Kjduet\nLOLOLOaushaihs asduhsh sshkjieej");
         model.addCursorObserver(this);
         model.addTextObserver(this);
-        this.getContentPane().add(model);
+        this.add(model);
 
         deleteAfter = new DeleteAfterAction(model);
         deleteBefore = new DeleteBeforeAction(model);
+        selectLeft = new SelectLeftAction(model);
+        selectRight = new SelectRightAction(model);
 
         this.addKeyListener(new KeyListener() {
             @Override
@@ -57,12 +61,6 @@ public class TextEditor extends JFrame implements CursorObserver, TextObserver {
                     case KeyEvent.VK_DOWN:
                         model.moveCursorDown();
                         break;
-                    case KeyEvent.VK_DELETE:
-                        deleteAfter.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
-                        break;
-                    case KeyEvent.VK_BACK_SPACE:
-                        deleteBefore.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
-                        break;
                 }
             }
 
@@ -70,12 +68,56 @@ public class TextEditor extends JFrame implements CursorObserver, TextObserver {
             public void keyReleased(KeyEvent e) {}
         });
 
-        this.setSize(600, 600);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g){
+
+        super.paintComponent(g);
+
+        // paint text
+        g.setFont(font);
+        int h = g.getFontMetrics().getHeight();
+        int w = g.getFontMetrics().charWidth('i');
+        Iterator<String> linesIt = model.allLines();
+        while(linesIt.hasNext()){
+            g.drawString(linesIt.next(), 0, h);
+            h+=h;
+        }
+
+        //paint cursor
+        int asc = g.getFontMetrics().getAscent();
+        h = g.getFontMetrics().getHeight();
+        int diff = Math.abs(h - asc);
+        Location cursorLocation = model.getCursorLocation();
+        g.drawLine(cursorLocation.x*w, cursorLocation.y*h + diff, cursorLocation.x*w, (cursorLocation.y+1)*h + diff);
+
+        //paint selection
+        LocationRange selection = model.getSelectionRange();
+        Location min = selection.getMin();
+        Location max = selection.getMax();
+
+        int rowDistance = selection.getRowDistance();
+
+        System.out.println(min.x*w);
+        System.out.println(min.y*h);
+        System.out.println((max.x-min.x)*w);
+        System.out.println(h);
+
+        //if(rowDistance==0){
+            g.setColor(Color.YELLOW);
+            g.fillRect(min.x*w, min.y*h, (max.x-min.x)*w, h);
+        //g.fillRect(10, 10, 200, 200);
+        //}
+        //else{
+
+        //}
+
     }
 
 
     @Override
-    public void updateCursorLocation(TextEditorModel.Location loc) {
+    public void updateCursorLocation(Location loc) {
         repaint();
     }
 
@@ -84,9 +126,6 @@ public class TextEditor extends JFrame implements CursorObserver, TextObserver {
         repaint();
     }
 
-    public static void main(String[] args){
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new TextEditor();
-        });
-    }
+
+
 }
