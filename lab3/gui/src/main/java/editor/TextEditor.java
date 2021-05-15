@@ -22,6 +22,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
     private Action clearDocument;
     private Action cursorToStart;
     private Action cursorToEnd;
+    private ExitAction exitAction;
 
     private ClipboardStack clipboard;
 
@@ -47,7 +48,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
         JMenu menuFile = new JMenu("File");
         JMenuItem itemOpen = new JMenuItem("Open");
         JMenuItem itemSave = new JMenuItem("Save");
-        JMenuItem itemExit = new JMenuItem("Exit");
+        JMenuItem itemExit = new JMenuItem(exitAction);
 
         menuFile.add(itemOpen);
         menuFile.add(itemSave);
@@ -112,7 +113,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
         cursorToEnd = new CursorToDocumentEndAction("Cursoe to document end", model);
 
         clearDocument = new ClearDocumentAction("Clear document", model);
-
+        exitAction = new ExitAction("Exit", this);
 
 
 
@@ -125,18 +126,27 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
                 int code = e.getKeyCode();
                 switch (code){
                     case KeyEvent.VK_LEFT:
-                        model.moveCursorLeft();
+                        if(e.isShiftDown())
+                            selectLeft.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                        else
+                            model.moveCursorLeft();
                         break;
                     case KeyEvent.VK_UP:
                         model.moveCursorUp();
                         break;
                     case KeyEvent.VK_RIGHT:
-                        model.moveCursorRight();
+                        if(e.isShiftDown())
+                            selectRight.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                        else
+                            model.moveCursorRight();
                         break;
                     case KeyEvent.VK_DOWN:
                         model.moveCursorDown();
                         break;
                     default:
+                        if(!e.isShiftDown()){
+                            code = Character.toLowerCase(code);
+                        }
                         new InsertCharAction("Insert char", model, (char) code).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
                 }
             }

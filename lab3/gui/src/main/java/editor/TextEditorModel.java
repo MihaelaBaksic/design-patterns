@@ -1,6 +1,7 @@
 package editor;
 
 import javax.swing.*;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -230,11 +231,12 @@ public class TextEditorModel implements LinesIterable{
 
     public void insert(Character c){
 
-        if( !Character.isLetterOrDigit(c) && !(c==10))
+        if( (c > 126 || c < 32) && c!=10  )
             return;
 
         if(c==10)
             enter();
+
         else{
             StringBuilder sb = new StringBuilder(lines.get(cursorLocation.y));
             String newLine = sb.insert(cursorLocation.x, c).toString();
