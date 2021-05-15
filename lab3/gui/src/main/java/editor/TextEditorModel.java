@@ -39,6 +39,15 @@ public class TextEditorModel implements LinesIterable{
         return lines.subList(index1, index2).iterator();
     }
 
+    public void clear(){
+        lines = new ArrayList<>();
+        lines.add("");
+
+        cursorLocation.x = 0;
+        cursorLocation.y = 0;
+
+        notifyTextObservers();
+    }
 
     public void addCursorObserver(CursorObserver o){
         cursorObservers.add(o);
@@ -61,6 +70,21 @@ public class TextEditorModel implements LinesIterable{
             observer.updateCursorLocation(this.cursorLocation);
         }
     }
+
+    public void cursorToStart(){
+        cursorLocation.x = 0;
+        cursorLocation.y = 0;
+
+        notifyCursorObservers();
+    }
+
+    public void cursorToEnd(){
+        cursorLocation.y = lines.size() > 0 ? lines.size()-1 : 0;
+        cursorLocation.x = lines.get(lines.size()-1).length();
+
+        notifyCursorObservers();
+    }
+
 
     private void notifyTextObservers(){
         for(var observer : textObservers){

@@ -11,7 +11,8 @@ public class SelectRightAction extends AbstractAction {
 
     private TextEditorModel model;
 
-    public SelectRightAction(TextEditorModel model){
+    public SelectRightAction(String name, TextEditorModel model){
+        super(name);
         this.model = model;
     }
 

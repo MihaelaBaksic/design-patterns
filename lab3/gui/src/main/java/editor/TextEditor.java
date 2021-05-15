@@ -19,6 +19,9 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
     private Action deleteBefore;
     private Action selectLeft;
     private Action selectRight;
+    private Action clearDocument;
+    private Action cursorToStart;
+    private Action cursorToEnd;
 
     private ClipboardStack clipboard;
 
@@ -26,26 +29,92 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
 
     private UndoManager undoManager = UndoManager.getInstance();
 
+    private JMenuBar menuBar;
+
     public TextEditor(){
         super();
         clipboard = new ClipboardStack();
-        init();
+        this.menuBar = new JMenuBar();
+        initGui();
+        initMenu();
     }
 
-    private void init(){
+    public JMenuBar getMenuBar() {
+        return menuBar;
+    }
+
+    private void initMenu(){
+        JMenu menuFile = new JMenu("File");
+        JMenuItem itemOpen = new JMenuItem("Open");
+        JMenuItem itemSave = new JMenuItem("Save");
+        JMenuItem itemExit = new JMenuItem("Exit");
+
+        menuFile.add(itemOpen);
+        menuFile.add(itemSave);
+        menuFile.add(itemExit);
+
+
+        JMenu menuEdit = new JMenu("Edit");
+        JMenuItem itemUndo = new JMenuItem("Undo");
+        JMenuItem itemRedo = new JMenuItem("Redo");
+        JMenuItem itemCut = new JMenuItem("Cut");
+        JMenuItem itemCopy = new JMenuItem("Copy");
+        JMenuItem itemPaste = new JMenuItem("Paste");
+        JMenuItem itemPasteAndTake = new JMenuItem("Paste and Take");
+        JMenuItem itemDeleteSelection = new JMenuItem("Delete selection");
+        JMenuItem itemClearDocument = new JMenuItem(clearDocument);
+
+
+        menuEdit.add(itemUndo);
+        menuEdit.add(itemRedo);
+        menuEdit.add(itemCut);
+        menuEdit.add(itemCopy);
+        menuEdit.add(itemPaste);
+        menuEdit.add(itemPasteAndTake);
+        menuEdit.add(itemDeleteSelection);
+        menuEdit.add(itemClearDocument);
+
+
+        JMenu menuMove = new JMenu("Move");
+        JMenuItem itemCursorToStart = new JMenuItem(cursorToStart);
+        JMenuItem itemCursorToEnd = new JMenuItem(cursorToEnd);
+        JMenuItem deleteAfterItem = new JMenuItem(deleteBefore);
+
+        menuMove.add(deleteAfterItem);
+        menuMove.add(itemCursorToStart);
+        menuMove.add(itemCursorToEnd);
+
+        menuBar.add(menuFile);
+        menuBar.add(menuEdit);
+        menuBar.add(menuMove);
+    }
+
+    private void initGui(){
         this.setLayout(new BorderLayout());
         this.setFocusable(true);
 
-        model = new TextEditorModel("Kjduet\nLOLOLOaushaihs asduhsh sshkjieej");
+        model = new TextEditorModel("Kjduet\nLOLOLOaushaihs asduhsh sshk\njie     \nej");
         model.addCursorObserver(this);
         model.addTextObserver(this);
 
-        deleteAfter = new DeleteAfterAction(model);
-        deleteBefore = new DeleteBeforeAction(model);
-        selectLeft = new SelectLeftAction(model);
-        selectRight = new SelectRightAction(model);
+        deleteAfter = new DeleteAfterAction("Delete",model);
+        deleteAfter.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE));
+        this.getInputMap().put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "deleteKey");
+        this.getActionMap().put("deleteKey", deleteAfter);
 
-        this.grabFocus();
+        deleteBefore = new DeleteBeforeAction("Back space", model);
+        deleteBefore.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke((char) KeyEvent.VK_BACK_SPACE));
+
+        selectLeft = new SelectLeftAction("Select left", model);
+        selectRight = new SelectRightAction("Select right", model);
+
+        cursorToStart = new CursorToDocumentStartAction("Cursor to document start", model);
+        cursorToEnd = new CursorToDocumentEndAction("Cursoe to document end", model);
+
+        clearDocument = new ClearDocumentAction("Clear document", model);
+
+
+
 
         this.addKeyListener(new KeyListener() {
             @Override
@@ -53,7 +122,6 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                System.out.println("arrow");
                 int code = e.getKeyCode();
                 switch (code){
                     case KeyEvent.VK_LEFT:
@@ -69,7 +137,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
                         model.moveCursorDown();
                         break;
                     default:
-                        new InsertCharAction(model, (char) code).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                        new InsertCharAction("Insert char", model, (char) code).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
                 }
             }
 
@@ -89,10 +157,10 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
         int h = g.getFontMetrics().getHeight();
         int w = g.getFontMetrics().charWidth('i');
         Iterator<String> linesIt = model.allLines();
+        int offset_y=h;
         while(linesIt.hasNext()){
-            g.drawString(linesIt.next(), 0, h);
-
-            h+=h;
+            g.drawString(linesIt.next(), 0, offset_y);
+            offset_y+=h;
         }
 
         //paint cursor

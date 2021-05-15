@@ -10,7 +10,8 @@ public class InsertCharAction extends AbstractAction {
     private TextEditorModel model;
     private Character c;
 
-    public InsertCharAction(TextEditorModel model, Character c){
+    public InsertCharAction(String name, TextEditorModel model, Character c){
+        super(name);
         this.model = model;
         this.c = c;
 

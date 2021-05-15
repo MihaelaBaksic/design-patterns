@@ -11,7 +11,8 @@ public class DeleteAfterAction extends AbstractAction {
 
     private TextEditorModel model;
 
-    public DeleteAfterAction(TextEditorModel model){
+    public DeleteAfterAction(String name, TextEditorModel model){
+        super(name);
         this.model = model;
     }
 

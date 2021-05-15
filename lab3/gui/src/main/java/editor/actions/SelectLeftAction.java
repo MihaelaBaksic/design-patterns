@@ -10,7 +10,9 @@ public class SelectLeftAction extends AbstractAction {
 
     private TextEditorModel model;
 
-    public SelectLeftAction(TextEditorModel model){
+
+    public SelectLeftAction(String name, TextEditorModel model){
+        super(name);
         this.model = model;
     }
 
