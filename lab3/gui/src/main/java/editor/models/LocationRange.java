@@ -1,7 +1,7 @@
-package editor;
+package editor.models;
 
 
-import java.rmi.MarshalException;
+import editor.models.Location;
 
 public class LocationRange{
 
@@ -12,6 +12,14 @@ public class LocationRange{
 
     public Location start;
     public Location end;
+
+    @Override
+    public String toString() {
+        return "LocationRange{" +
+                "start=" + start +
+                ", end=" + end +
+                '}';
+    }
 
     public boolean isSelected(){
         return !start.equals(end);

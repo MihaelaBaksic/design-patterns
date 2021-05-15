@@ -1,7 +1,8 @@
-package editor.actions;
+package editor.actions.selection;
 
-import editor.LocationRange;
-import editor.TextEditorModel;
+import editor.models.Location;
+import editor.models.LocationRange;
+import editor.models.TextEditorModel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -20,12 +21,14 @@ public class SelectLeftAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         LocationRange range = model.getSelectionRange();
 
-        if(!range.isSelected()){
-            range.start = model.getCursorLocation();
-        }
+        System.out.println(model.getSelectionRange());
+        if(!range.isSelected())
+            range.start = new Location(model.getCursorLocation());
 
-        range.end = model.getCursorLocation();
-
+        model.moveCursorLeft();
+        range.end = new Location(model.getCursorLocation());
         model.setSelectionRange(range);
+
+        System.out.println(model.getSelectionRange());
     }
 }

@@ -1,8 +1,8 @@
-package editor.actions;
+package editor.actions.selection;
 
-import editor.Location;
-import editor.LocationRange;
-import editor.TextEditorModel;
+import editor.models.Location;
+import editor.models.LocationRange;
+import editor.models.TextEditorModel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -20,14 +20,14 @@ public class SelectRightAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         LocationRange range = model.getSelectionRange();
 
-        if(!range.isSelected()){
-            model.moveCursorLeft();
-            range.start = model.getCursorLocation();
-            model.moveCursorRight();
-        }
+        System.out.println(model.getSelectionRange());
+        if(!range.isSelected())
+            range.start = new Location(model.getCursorLocation());
 
-        range.end = model.getCursorLocation();
+        model.moveCursorRight();
+        range.end = new Location(model.getCursorLocation());;
 
         model.setSelectionRange(range);
+        System.out.println(model.getSelectionRange());
     }
 }

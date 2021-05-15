@@ -1,6 +1,6 @@
-package editor.actions;
+package editor.actions.deletion;
 
-import editor.TextEditorModel;
+import editor.models.TextEditorModel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -17,5 +17,6 @@ public class DeleteBeforeAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         model.deleteBefore();
+        model.removeSelection();
     }
 }

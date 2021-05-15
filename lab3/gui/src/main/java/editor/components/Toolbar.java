@@ -1,4 +1,4 @@
-package editor;
+package editor.components;
 
 import javax.swing.*;
 

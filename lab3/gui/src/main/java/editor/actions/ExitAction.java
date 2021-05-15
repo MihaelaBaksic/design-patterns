@@ -1,6 +1,6 @@
 package editor.actions;
 
-import editor.TextEditor;
+import editor.components.TextEditor;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

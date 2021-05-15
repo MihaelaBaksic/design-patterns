@@ -1,7 +1,23 @@
-package editor;
+package editor.components;
 
 
+import editor.*;
 import editor.actions.*;
+import editor.actions.cursor.CursorToDocumentEndAction;
+import editor.actions.cursor.CursorToDocumentStartAction;
+import editor.actions.deletion.ClearDocumentAction;
+import editor.actions.deletion.DeleteAfterAction;
+import editor.actions.deletion.DeleteBeforeAction;
+import editor.actions.selection.SelectDownAction;
+import editor.actions.selection.SelectLeftAction;
+import editor.actions.selection.SelectRightAction;
+import editor.actions.selection.SelectUpAction;
+import editor.models.ClipboardStack;
+import editor.models.Location;
+import editor.models.LocationRange;
+import editor.models.TextEditorModel;
+import editor.observers.CursorObserver;
+import editor.observers.TextObserver;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,10 +35,13 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
     private Action deleteBefore;
     private Action selectLeft;
     private Action selectRight;
+    private Action selectUp;
+    private Action selectDown;
     private Action clearDocument;
     private Action cursorToStart;
     private Action cursorToEnd;
-    private ExitAction exitAction;
+    private Action exitAction;
+
 
     private ClipboardStack clipboard;
 
@@ -36,7 +55,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
         super();
         clipboard = new ClipboardStack();
         this.menuBar = new JMenuBar();
-        initGui();
+        init();
         initMenu();
     }
 
@@ -90,16 +109,16 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
         menuBar.add(menuMove);
     }
 
-    private void initGui(){
+    private void init(){
         this.setLayout(new BorderLayout());
         this.setFocusable(true);
 
-        model = new TextEditorModel("Kjduet\nLOLOLOaushaihs asduhsh sshk\njie     \nej");
+        model = new TextEditorModel("Kjduet\nLOLOLOaushaihs asduhsh sshk\njie\nej");
         model.addCursorObserver(this);
         model.addTextObserver(this);
 
         deleteAfter = new DeleteAfterAction("Delete",model);
-        deleteAfter.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE));
+        //deleteAfter.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE));
         this.getInputMap().put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "deleteKey");
         this.getActionMap().put("deleteKey", deleteAfter);
 
@@ -108,6 +127,8 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
 
         selectLeft = new SelectLeftAction("Select left", model);
         selectRight = new SelectRightAction("Select right", model);
+        selectUp = new SelectUpAction("Select up", model);
+        selectDown = new SelectDownAction("Select down", model);
 
         cursorToStart = new CursorToDocumentStartAction("Cursor to document start", model);
         cursorToEnd = new CursorToDocumentEndAction("Cursoe to document end", model);
@@ -128,20 +149,35 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
                     case KeyEvent.VK_LEFT:
                         if(e.isShiftDown())
                             selectLeft.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
-                        else
+                        else{
                             model.moveCursorLeft();
+                            model.removeSelection();
+                        }
                         break;
                     case KeyEvent.VK_UP:
-                        model.moveCursorUp();
+                        if(e.isShiftDown())
+                            selectUp.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                        else {
+                            model.moveCursorUp();
+                            model.removeSelection();
+                        }
                         break;
                     case KeyEvent.VK_RIGHT:
                         if(e.isShiftDown())
                             selectRight.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
-                        else
+                        else{
                             model.moveCursorRight();
+                            model.removeSelection();
+                        }
                         break;
                     case KeyEvent.VK_DOWN:
-                        model.moveCursorDown();
+                        if(e.isShiftDown())
+                            selectDown.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                        else
+                        {
+                            model.moveCursorDown();
+                            model.removeSelection();
+                        }
                         break;
                     default:
                         if(!e.isShiftDown()){
@@ -161,11 +197,35 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
     protected void paintComponent(Graphics g){
 
         super.paintComponent(g);
-
-        // paint text
         g.setFont(font);
+
         int h = g.getFontMetrics().getHeight();
         int w = g.getFontMetrics().charWidth('i');
+        int asc = g.getFontMetrics().getAscent();
+        int diff = Math.abs(h - asc);
+
+        //paint selection
+        LocationRange selection = model.getSelectionRange();
+        Location min = selection.getMin();
+        Location max = selection.getMax();
+
+        int rowDistance = selection.getRowDistance();
+        g.setColor(Color.YELLOW);
+        if(rowDistance==0){
+            g.fillRect(min.x*w, min.y*h + diff, (max.x-min.x)*w, h);
+        }
+        else{
+            //min from x to end
+            g.fillRect(min.x*w, min.y*h + diff, getWidth() - (min.x)*w, h);
+            //all full rows
+            g.fillRect(0, (min.y+1)*h, getWidth(), h*(rowDistance-1));
+            //last row from 0 to x
+            g.fillRect(0, max.y*w + diff, max.x*w , h );
+        }
+
+        // paint text
+        g.setColor(Color.BLACK);
+
         Iterator<String> linesIt = model.allLines();
         int offset_y=h;
         while(linesIt.hasNext()){
@@ -174,32 +234,10 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
         }
 
         //paint cursor
-        int asc = g.getFontMetrics().getAscent();
-        h = g.getFontMetrics().getHeight();
-        int diff = Math.abs(h - asc);
         Location cursorLocation = model.getCursorLocation();
         g.drawLine(cursorLocation.x*w, cursorLocation.y*h + diff, cursorLocation.x*w, (cursorLocation.y+1)*h + diff);
 
-        //paint selection
-        LocationRange selection = model.getSelectionRange();
-        Location min = selection.getMin();
-        Location max = selection.getMax();
-
-        int rowDistance = selection.getRowDistance();
-
-        /*System.out.println(min.x*w);
-        System.out.println(min.y*h);
-        System.out.println((max.x-min.x)*w);
-        System.out.println(h);*/
-
-        //if(rowDistance==0){
-        // g.setColor(Color.YELLOW);
-        // g.fillRect(min.x*w, min.y*h, (max.x-min.x)*w, h);
-        //g.fillRect(10, 10, 200, 200);
-        //}
-        //else{
-
-        //}
+        System.out.println(model.getSelectedText());
 
     }
 

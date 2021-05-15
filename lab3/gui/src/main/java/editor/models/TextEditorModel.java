@@ -1,12 +1,14 @@
-package editor;
+package editor.models;
 
-import javax.swing.*;
-import java.awt.event.KeyEvent;
+import editor.LinesIterable;
+import editor.observers.CursorObserver;
+import editor.observers.TextObserver;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TextEditorModel implements LinesIterable{
+public class TextEditorModel implements LinesIterable {
 
     private List<String> lines;
     private Location cursorLocation;
@@ -134,10 +136,16 @@ public class TextEditorModel implements LinesIterable{
         }
     }
 
+    public void removeSelection(){
+        this.selectionRange = new LocationRange();
+        notifyTextObservers();
+    }
+
     public void deleteBefore(){
 
         if(selectionRange.isSelected()){
             deleteRange(this.selectionRange);
+            notifyTextObservers();
             return;
         }
 
@@ -173,6 +181,7 @@ public class TextEditorModel implements LinesIterable{
 
         if(selectionRange.isSelected()){
             deleteRange(this.selectionRange);
+            notifyTextObservers();
             return;
         }
 
@@ -215,7 +224,7 @@ public class TextEditorModel implements LinesIterable{
             lines.remove(indexLastLine);
             indexLastLine--;
         }
-
+        cursorLocation = new Location(minLocation);
         notifyTextObservers();
         notifyCursorObservers();
     }
@@ -234,6 +243,11 @@ public class TextEditorModel implements LinesIterable{
         if( (c > 126 || c < 32) && c!=10  )
             return;
 
+        if(selectionRange.isSelected()){
+            deleteRange(selectionRange);
+            removeSelection();
+        }
+
         if(c==10)
             enter();
 
@@ -245,12 +259,42 @@ public class TextEditorModel implements LinesIterable{
             cursorLocation.x++;
         }
 
+        removeSelection();
         System.out.println(lines);
         notifyTextObservers();
         notifyCursorObservers();
     }
 
     public void insert(String text){
+
+    }
+
+    public String getSelectedText(){
+        if(!selectionRange.isSelected())
+            return null;
+
+        int rowDistance = selectionRange.getRowDistance();
+        Location min = selectionRange.getMin();
+        Location max = selectionRange.getMax();
+
+        String text = "";
+        if(rowDistance==0){
+            return lines.get(min.y).substring(min.x, max.x);
+        }
+
+        text += lines.get(min.y).substring(min.x); // first line
+
+        for(int i=min.y+1; i<max.y; i++){ // middle lines
+            text+="\n" + lines.get(i);
+        }
+
+        text += "\n" + lines.get(max.y).substring(0, max.y); // last line
+        return text;
+    }
+
+    public void deleteSelectedText(){
+        if(!selectionRange.isSelected())
+            return;
 
     }
 

@@ -1,4 +1,4 @@
-package editor;
+package editor.models;
 
 public class Location implements Comparable<Location>{
 
@@ -6,6 +6,12 @@ public class Location implements Comparable<Location>{
         this.x = x;
         this.y = y;
     }
+
+    public Location(Location l){
+        this.x = l.x;
+        this.y = l.y;
+    }
+
     public int x;
     public int y;
 
@@ -32,5 +38,13 @@ public class Location implements Comparable<Location>{
             else
                 return 0;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 }

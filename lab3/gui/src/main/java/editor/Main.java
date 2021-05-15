@@ -1,5 +1,8 @@
 package editor;
 
+import editor.components.TextEditor;
+import editor.components.Toolbar;
+
 import javax.swing.*;
 import java.awt.*;
 

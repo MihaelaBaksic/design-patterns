@@ -1,4 +1,6 @@
-package editor;
+package editor.models;
+
+import editor.observers.ClipboardObserver;
 
 import java.util.ArrayList;
 import java.util.List;
