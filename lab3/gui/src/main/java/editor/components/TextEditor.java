@@ -148,6 +148,8 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         menuMove.add(itemCursorToStart);
         menuMove.add(itemCursorToEnd);
 
+        JMenu menuPlugins = new JMenu("Plugins");
+
         menuBar.add(menuFile);
         menuBar.add(menuEdit);
         menuBar.add(menuMove);
