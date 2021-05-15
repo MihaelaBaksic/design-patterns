@@ -376,6 +376,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         itemDeleteSelection.setEnabled(model.getSelectionRange().isSelected());
         itemUndo.setEnabled(!undoManager.undoStackEmpty());
         itemRedo.setEnabled(!undoManager.redoStackEmpty());
+        itemSave.setEnabled(!undoManager.undoStackEmpty());
 
     }
 }

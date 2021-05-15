@@ -21,7 +21,6 @@ public class SelectLeftAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         LocationRange range = model.getSelectionRange();
 
-        System.out.println(model.getSelectionRange());
         if(!range.isSelected())
             range.start = new Location(model.getCursorLocation());
 
@@ -29,6 +28,5 @@ public class SelectLeftAction extends AbstractAction {
         range.end = new Location(model.getCursorLocation());
         model.setSelectionRange(range);
 
-        System.out.println(model.getSelectionRange());
     }
 }

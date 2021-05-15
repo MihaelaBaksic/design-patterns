@@ -1,5 +1,7 @@
 package editor;
 
+import editor.actions.undoables.EditAction;
+
 import java.util.Stack;
 
 public class UndoManager {

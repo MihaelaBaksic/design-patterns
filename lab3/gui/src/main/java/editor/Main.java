@@ -13,16 +13,12 @@ public class Main extends JFrame{
         this.setTitle("TextEditor");
         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.getContentPane().setLayout(new BorderLayout());
-        var menu = new Menu();
-
 
         TextEditor textEditor = new TextEditor();
         this.getContentPane().add(textEditor.getToolBar(), BorderLayout.NORTH);
         //this.getContentPane().add(textEditor.getStatusBar(), BorderLayout.NORTH);
         this.getContentPane().add(textEditor, BorderLayout.CENTER);
         this.setJMenuBar(textEditor.getMenuBar());
-
-
 
         this.setSize(600, 600);
         this.setVisible(true);

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TextEditorModel implements LinesIterable {
+public class TextEditorModel {
 
     private List<String> lines;
     private Location cursorLocation;
@@ -46,14 +46,12 @@ public class TextEditorModel implements LinesIterable {
         this.cursorLocation = new Location(cursorLocation);
     }
 
-    @Override
     public Iterator<String> allLines() {
         return lines.iterator();
     }
 
     public int linesNumber(){ return lines.size(); }
 
-    @Override
     public Iterator<String> linesRange(int index1, int index2) {
         return lines.subList(index1, index2).iterator();
     }
@@ -94,6 +92,7 @@ public class TextEditorModel implements LinesIterable {
     }
 
     public void cursorToStart(){
+        cursorLocation.x = 0;
         cursorLocation.x = 0;
         cursorLocation.y = 0;
 
@@ -179,7 +178,6 @@ public class TextEditorModel implements LinesIterable {
             int currLen = lines.get(cursorLocation.y-1).length();
             String combinedLines = lines.get(cursorLocation.y-1) + lines.get(cursorLocation.y);
             lines.set(cursorLocation.y-1, combinedLines);
-            System.out.println(cursorLocation.y);
             lines.remove(cursorLocation.y);
 
             cursorLocation.y--;

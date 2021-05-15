@@ -1,8 +1,6 @@
 package editor.actions.undoables;
 
-import editor.EditAction;
 import editor.models.Location;
-import editor.models.LocationRange;
 import editor.models.TextEditorModel;
 
 import java.util.ArrayList;
