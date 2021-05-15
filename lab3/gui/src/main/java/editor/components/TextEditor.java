@@ -17,6 +17,8 @@ import editor.actions.selection.SelectDownAction;
 import editor.actions.selection.SelectLeftAction;
 import editor.actions.selection.SelectRightAction;
 import editor.actions.selection.SelectUpAction;
+import editor.actions.undoables.RedoAction;
+import editor.actions.undoables.UndoAction;
 import editor.models.ClipboardStack;
 import editor.models.Location;
 import editor.models.LocationRange;
@@ -53,6 +55,9 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
     private Action pasteAction;
     private Action pasteAndTakeAction;
 
+    private Action redoAction;
+    private Action undoAction;
+
     private JButton copy;
     private JButton paste;
     private JButton cut;
@@ -77,17 +82,16 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
 
     private ClipboardStack clipboard;
     private TextEditorModel model;
-    private UndoManager undoManager = UndoManager.getInstance();
+    private UndoManager undoManager;
     private JMenuBar menuBar;
     private JToolBar toolBar;
     private JLabel statusBar;
 
 
-
-
     public TextEditor(){
         super();
         clipboard = new ClipboardStack();
+        undoManager = UndoManager.getInstance();
         this.menuBar = new JMenuBar();
         this.toolBar = new Toolbar();
         this.statusBar = new JLabel();
@@ -115,8 +119,8 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
 
 
         JMenu menuEdit = new JMenu("Edit");
-        itemUndo = new JMenuItem("Undo");
-        itemRedo = new JMenuItem("Redo");
+        itemUndo = new JMenuItem(undoAction);
+        itemRedo = new JMenuItem(redoAction);
         itemCut = new JMenuItem(cutAction);
         itemCopy = new JMenuItem(copyAction);
         itemPaste = new JMenuItem(pasteAction);
@@ -163,7 +167,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         this.getInputMap().put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "deleteKey");
         this.getActionMap().put("deleteKey", deleteAfter);
 
-        deleteBefore = new DeleteBeforeAction("Back space", model);
+        deleteBefore = new DeleteBeforeAction("Back space", model, undoManager);
         deleteBefore.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke((char) KeyEvent.VK_BACK_SPACE));
 
         selectLeft = new SelectLeftAction("Select left", model);
@@ -189,6 +193,12 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
 
         pasteAndTakeAction = new PasteAndTakeAction("Paste and Take", model, clipboard);
         pasteAndTakeAction.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control shift V"));
+
+        redoAction = new RedoAction("Redo", undoManager);
+        redoAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control Z"));
+
+        undoAction = new UndoAction("Undo", undoManager);
+        undoAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control Y"));
 
         this.addKeyListener(new KeyListener() {
             @Override
@@ -237,7 +247,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
                         if(!e.isShiftDown()){
                             code = Character.toLowerCase(code);
                         }
-                        new InsertCharAction("Insert char", model, (char) code).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                        new InsertCharAction("Insert char", model, (char) code, undoManager).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
                 }
             }
 
@@ -248,9 +258,9 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
     }
 
     private void initToolbar(){
-        undo = new JButton("Undo");
+        undo = new JButton(undoAction);
         undo.setFocusable(false);
-        redo = new JButton("Redo");
+        redo = new JButton(redoAction);
         redo.setFocusable(false);
         cut = new JButton(cutAction);
         cut.setFocusable(false);
@@ -355,6 +365,8 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         paste.setEnabled(!clipboard.isEmpty());
         copy.setEnabled(model.getSelectionRange().isSelected());
         cut.setEnabled(model.getSelectionRange().isSelected());
+        undo.setEnabled(!undoManager.undoStackEmpty());
+        redo.setEnabled(!undoManager.redoStackEmpty());
 
         // updating activity of menu items
         itemPaste.setEnabled(!clipboard.isEmpty());
@@ -362,6 +374,8 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         itemCopy.setEnabled(model.getSelectionRange().isSelected());
         itemCut.setEnabled(model.getSelectionRange().isSelected());
         itemDeleteSelection.setEnabled(model.getSelectionRange().isSelected());
+        itemUndo.setEnabled(!undoManager.undoStackEmpty());
+        itemRedo.setEnabled(!undoManager.redoStackEmpty());
 
     }
 }

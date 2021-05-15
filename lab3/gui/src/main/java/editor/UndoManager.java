@@ -29,6 +29,15 @@ public class UndoManager {
         }
     }
 
+    public void redo(){
+        if(!redoStackEmpty()){
+            EditAction action = redoStack.pop();
+            undoStack.push(action);
+            action.executeDo();
+        }
+    }
+
+
     public void push(EditAction c){
         redoStack.clear();
         undoStack.push(c);
