@@ -18,8 +18,10 @@ public class Main extends JFrame{
 
         TextEditor textEditor = new TextEditor();
         this.getContentPane().add(textEditor.getToolBar(), BorderLayout.NORTH);
+        //this.getContentPane().add(textEditor.getStatusBar(), BorderLayout.NORTH);
         this.getContentPane().add(textEditor, BorderLayout.CENTER);
         this.setJMenuBar(textEditor.getMenuBar());
+
 
 
         this.setSize(600, 600);

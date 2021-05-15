@@ -22,12 +22,14 @@ public class ClipboardStack {
 
     public void push(String text){
         texts.push(text);
+        notifyObservers();
     }
 
     public String pop(){
-        if (!isEmpty())
+        if (!isEmpty()){
+            notifyObservers();
             return texts.pop();
-
+        }
         return "";
     }
 
@@ -36,6 +38,11 @@ public class ClipboardStack {
             return texts.peek();
 
         return "";
+    }
+
+    private void notifyObservers(){
+        for(var o : observers)
+            o.updateClipboard();
     }
 
     public boolean isEmpty(){

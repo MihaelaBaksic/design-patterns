@@ -1,6 +1,7 @@
 package editor.models;
 
 import editor.LinesIterable;
+import editor.observers.ClipboardObserver;
 import editor.observers.CursorObserver;
 import editor.observers.TextObserver;
 
@@ -36,6 +37,8 @@ public class TextEditorModel implements LinesIterable {
     public Iterator<String> allLines() {
         return lines.iterator();
     }
+
+    public int linesNumber(){ return lines.size(); }
 
     @Override
     public Iterator<String> linesRange(int index1, int index2) {

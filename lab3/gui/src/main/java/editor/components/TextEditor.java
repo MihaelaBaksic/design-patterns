@@ -21,6 +21,7 @@ import editor.models.ClipboardStack;
 import editor.models.Location;
 import editor.models.LocationRange;
 import editor.models.TextEditorModel;
+import editor.observers.ClipboardObserver;
 import editor.observers.CursorObserver;
 import editor.observers.TextObserver;
 
@@ -31,7 +32,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Iterator;
 
-public class TextEditor extends JPanel implements CursorObserver, TextObserver {
+public class TextEditor extends JPanel implements CursorObserver, TextObserver, ClipboardObserver {
 
     private static final long serialVersionUID = 1L;
     private static final Font font = new Font("Monospaced", Font.PLAIN, 12);
@@ -58,32 +59,55 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
     private JButton undo;
     private JButton redo;
 
+    private JMenuItem itemOpen;
+    private JMenuItem itemSave;
+    private JMenuItem itemExit;
+
+    private JMenuItem itemUndo;
+    private JMenuItem itemRedo;
+    private JMenuItem itemCut;
+    private JMenuItem itemCopy;
+    private JMenuItem itemPaste;
+    private JMenuItem itemPasteAndTake;
+    private JMenuItem itemDeleteSelection;
+    private JMenuItem itemClearDocument;
+    private JMenuItem itemCursorToStart;
+    private JMenuItem itemCursorToEnd;
+    private JMenuItem deleteAfterItem;
+
     private ClipboardStack clipboard;
     private TextEditorModel model;
     private UndoManager undoManager = UndoManager.getInstance();
     private JMenuBar menuBar;
     private JToolBar toolBar;
+    private JLabel statusBar;
+
+
+
 
     public TextEditor(){
         super();
         clipboard = new ClipboardStack();
         this.menuBar = new JMenuBar();
         this.toolBar = new Toolbar();
+        this.statusBar = new JLabel();
         init();
         initMenu();
         initToolbar();
+        initStatusBar();
     }
 
     public JMenuBar getMenuBar() {
         return menuBar;
     }
     public JToolBar getToolBar() { return toolBar; }
+    public JLabel getStatusBar() { return statusBar; }
 
     private void initMenu(){
         JMenu menuFile = new JMenu("File");
-        JMenuItem itemOpen = new JMenuItem("Open");
-        JMenuItem itemSave = new JMenuItem("Save");
-        JMenuItem itemExit = new JMenuItem(exitAction);
+        itemOpen = new JMenuItem("Open");
+        itemSave = new JMenuItem("Save");
+        itemExit = new JMenuItem(exitAction);
 
         menuFile.add(itemOpen);
         menuFile.add(itemSave);
@@ -91,14 +115,14 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
 
 
         JMenu menuEdit = new JMenu("Edit");
-        JMenuItem itemUndo = new JMenuItem("Undo");
-        JMenuItem itemRedo = new JMenuItem("Redo");
-        JMenuItem itemCut = new JMenuItem(cutAction);
-        JMenuItem itemCopy = new JMenuItem(copyAction);
-        JMenuItem itemPaste = new JMenuItem(pasteAction);
-        JMenuItem itemPasteAndTake = new JMenuItem(pasteAndTakeAction);
-        JMenuItem itemDeleteSelection = new JMenuItem(deleteSelection);
-        JMenuItem itemClearDocument = new JMenuItem(clearDocument);
+        itemUndo = new JMenuItem("Undo");
+        itemRedo = new JMenuItem("Redo");
+        itemCut = new JMenuItem(cutAction);
+        itemCopy = new JMenuItem(copyAction);
+        itemPaste = new JMenuItem(pasteAction);
+        itemPasteAndTake = new JMenuItem(pasteAndTakeAction);
+        itemDeleteSelection = new JMenuItem(deleteSelection);
+        itemClearDocument = new JMenuItem(clearDocument);
 
 
         menuEdit.add(itemUndo);
@@ -112,9 +136,9 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
 
 
         JMenu menuMove = new JMenu("Move");
-        JMenuItem itemCursorToStart = new JMenuItem(cursorToStart);
-        JMenuItem itemCursorToEnd = new JMenuItem(cursorToEnd);
-        JMenuItem deleteAfterItem = new JMenuItem(deleteBefore);
+        itemCursorToStart = new JMenuItem(cursorToStart);
+        itemCursorToEnd = new JMenuItem(cursorToEnd);
+        deleteAfterItem = new JMenuItem(deleteBefore);
 
         menuMove.add(deleteAfterItem);
         menuMove.add(itemCursorToStart);
@@ -132,6 +156,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
         model = new TextEditorModel("Kjduet\nLOLOLOaushaihs asduhsh sshk\njie\nej");
         model.addCursorObserver(this);
         model.addTextObserver(this);
+        clipboard.addObserver(this);
 
         deleteAfter = new DeleteAfterAction("Delete",model);
         //deleteAfter.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE));
@@ -245,6 +270,8 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
     @Override
     protected void paintComponent(Graphics g){
 
+        setVisibilities();
+
         super.paintComponent(g);
         g.setFont(font);
 
@@ -286,8 +313,19 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
         Location cursorLocation = model.getCursorLocation();
         g.drawLine(cursorLocation.x*w, cursorLocation.y*h + diff, cursorLocation.x*w, (cursorLocation.y+1)*h + diff);
 
+        //paint status bar
+        int x = model.getCursorLocation().x;
+        int y = model.getCursorLocation().y;
+        statusBar.setText("Cursor at (" + x + ", " + y + ")  Lines: " + model.linesNumber());
     }
 
+    private void initStatusBar(){
+        statusBar.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+        int x = model.getCursorLocation().x;
+        int y = model.getCursorLocation().y;
+        statusBar.setText("Cursor at (" + x + ", " + y + ")  Lines: " + model.linesNumber());
+        statusBar.setVisible(true);
+    }
 
     @Override
     public void updateCursorLocation(Location loc) {
@@ -300,4 +338,30 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
     }
 
 
+    @Override
+    public void updateClipboard() {
+        // updating activity of action buttons related to clipboard
+        paste.setEnabled(!clipboard.isEmpty());
+
+        // updating activity of items related to clipboard
+        itemPaste.setEnabled(!clipboard.isEmpty());
+        itemPasteAndTake.setEnabled(!clipboard.isEmpty());
+
+    }
+
+
+    private void setVisibilities(){
+        // updating activity of action buttons
+        paste.setEnabled(!clipboard.isEmpty());
+        copy.setEnabled(model.getSelectionRange().isSelected());
+        cut.setEnabled(model.getSelectionRange().isSelected());
+
+        // updating activity of menu items
+        itemPaste.setEnabled(!clipboard.isEmpty());
+        itemPasteAndTake.setEnabled(!clipboard.isEmpty());
+        itemCopy.setEnabled(model.getSelectionRange().isSelected());
+        itemCut.setEnabled(model.getSelectionRange().isSelected());
+        itemDeleteSelection.setEnabled(model.getSelectionRange().isSelected());
+
+    }
 }
