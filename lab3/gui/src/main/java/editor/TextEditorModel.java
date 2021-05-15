@@ -204,14 +204,22 @@ public class TextEditorModel extends JComponent implements LinesIterable{
         notifyCursorObservers();
     }
 
-    public void insert(char c){
+    public void insert(Character c){
 
-        StringBuilder sb = new StringBuilder(lines.get(cursorLocation.y));
-        String newLine = sb.insert(cursorLocation.x, c).toString();
-        lines.set(cursorLocation.y, newLine);
+        if( !Character.isLetterOrDigit(c) && !(c==10))
+            return;
 
-        cursorLocation.x++;
+        if(c==10)
+            enter();
+        else{
+            StringBuilder sb = new StringBuilder(lines.get(cursorLocation.y));
+            String newLine = sb.insert(cursorLocation.x, c).toString();
+            lines.set(cursorLocation.y, newLine);
 
+            cursorLocation.x++;
+        }
+
+        System.out.println(lines);
         notifyTextObservers();
         notifyCursorObservers();
     }
@@ -220,7 +228,15 @@ public class TextEditorModel extends JComponent implements LinesIterable{
 
     }
 
+    private void enter(){
+        String currentLine = lines.get(cursorLocation.y);
 
+        lines.set(cursorLocation.y, currentLine.substring(0, cursorLocation.x));
+        lines.add(cursorLocation.y+1, currentLine.substring(cursorLocation.x));
+
+        cursorLocation.y++;
+        cursorLocation.x = 0;
+    }
 
 
 

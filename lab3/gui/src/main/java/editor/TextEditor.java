@@ -5,6 +5,7 @@ import editor.actions.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Iterator;
@@ -19,11 +20,16 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
     private Action selectLeft;
     private Action selectRight;
 
+    private ClipboardStack clipboard;
+
     private TextEditorModel model;
+
+    private UndoManager undoManager = UndoManager.getInstance();
 
     public TextEditor(){
         super();
         this.setVisible(true);
+        clipboard = new ClipboardStack();
         init();
     }
 
@@ -61,6 +67,8 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
                     case KeyEvent.VK_DOWN:
                         model.moveCursorDown();
                         break;
+                    default:
+                        new InsertCharAction(model, (char) code).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
                 }
             }
 
@@ -82,6 +90,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
         Iterator<String> linesIt = model.allLines();
         while(linesIt.hasNext()){
             g.drawString(linesIt.next(), 0, h);
+
             h+=h;
         }
 
@@ -99,14 +108,14 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
 
         int rowDistance = selection.getRowDistance();
 
-        System.out.println(min.x*w);
+        /*System.out.println(min.x*w);
         System.out.println(min.y*h);
         System.out.println((max.x-min.x)*w);
-        System.out.println(h);
+        System.out.println(h);*/
 
         //if(rowDistance==0){
-            g.setColor(Color.YELLOW);
-            g.fillRect(min.x*w, min.y*h, (max.x-min.x)*w, h);
+        // g.setColor(Color.YELLOW);
+        // g.fillRect(min.x*w, min.y*h, (max.x-min.x)*w, h);
         //g.fillRect(10, 10, 200, 200);
         //}
         //else{
@@ -125,7 +134,6 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
     public void updateText() {
         repaint();
     }
-
 
 
 }

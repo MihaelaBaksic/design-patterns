@@ -13,6 +13,7 @@ public class InsertCharAction extends AbstractAction {
     public InsertCharAction(TextEditorModel model, Character c){
         this.model = model;
         this.c = c;
+
     }
 
     @Override
