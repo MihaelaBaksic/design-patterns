@@ -12,9 +12,6 @@ public class SelectLeftAction extends AbstractAction {
 
     public SelectLeftAction(TextEditorModel model){
         this.model = model;
-
-        model.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("shift LEFT"),"selectLeft");
-        model.getActionMap().put("selectLeft", this);
     }
 
     @Override

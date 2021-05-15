@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TextEditorModel extends JComponent implements LinesIterable{
+public class TextEditorModel implements LinesIterable{
 
     private List<String> lines;
     private Location cursorLocation;

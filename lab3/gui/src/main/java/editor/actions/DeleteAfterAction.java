@@ -13,9 +13,6 @@ public class DeleteAfterAction extends AbstractAction {
 
     public DeleteAfterAction(TextEditorModel model){
         this.model = model;
-
-        model.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DELETE"),"deleteAfter");
-        model.getActionMap().put("deleteAfter", this);
     }
 
 

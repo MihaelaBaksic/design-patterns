@@ -13,9 +13,6 @@ public class SelectRightAction extends AbstractAction {
 
     public SelectRightAction(TextEditorModel model){
         this.model = model;
-
-        model.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("shift RIGHT"),"selectRight");
-        model.getActionMap().put("selectRight", this);
     }
 
     @Override

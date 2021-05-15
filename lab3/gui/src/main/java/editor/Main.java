@@ -14,8 +14,9 @@ public class Main extends JFrame{
         this.setJMenuBar(new Menu());
         this.getContentPane().add(new Toolbar(), BorderLayout.NORTH);
         this.getContentPane().add(new TextEditor(), BorderLayout.CENTER);
-        this.setVisible(true);
+
         this.setSize(600, 600);
+        this.setVisible(true);
     }
 
     public static void main(String[] args) {

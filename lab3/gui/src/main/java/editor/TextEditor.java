@@ -28,7 +28,6 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
 
     public TextEditor(){
         super();
-        this.setVisible(true);
         clipboard = new ClipboardStack();
         init();
     }
@@ -40,12 +39,13 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
         model = new TextEditorModel("Kjduet\nLOLOLOaushaihs asduhsh sshkjieej");
         model.addCursorObserver(this);
         model.addTextObserver(this);
-        this.add(model);
 
         deleteAfter = new DeleteAfterAction(model);
         deleteBefore = new DeleteBeforeAction(model);
         selectLeft = new SelectLeftAction(model);
         selectRight = new SelectRightAction(model);
+
+        this.grabFocus();
 
         this.addKeyListener(new KeyListener() {
             @Override
@@ -53,6 +53,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
 
             @Override
             public void keyPressed(KeyEvent e) {
+                System.out.println("arrow");
                 int code = e.getKeyCode();
                 switch (code){
                     case KeyEvent.VK_LEFT:
