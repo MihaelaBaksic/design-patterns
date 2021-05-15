@@ -1,7 +1,7 @@
 package editor.actions;
 
 import editor.UndoManager;
-import editor.actions.undoables.InsertCharUndoable;
+import editor.actions.undoables.UndoableAction;
 import editor.models.TextEditorModel;
 
 import javax.swing.*;
@@ -22,6 +22,15 @@ public class InsertCharAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        UndoableAction a = new UndoableAction(model);
+
+        a.setCursorPrior(model.getCursor());
+        a.setTextPrior(model.getLines());
+
         model.insert(c);
+
+        a.setCursorPosterior(model.getCursor());
+        a.setTextPosterior(model.getLines());
     }
 }

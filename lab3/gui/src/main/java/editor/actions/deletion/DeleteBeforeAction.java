@@ -1,7 +1,7 @@
 package editor.actions.deletion;
 
 import editor.UndoManager;
-import editor.actions.undoables.DeleteBeforeUndoable;
+import editor.actions.undoables.UndoableAction;
 import editor.models.TextEditorModel;
 
 import javax.swing.*;
@@ -20,7 +20,17 @@ public class DeleteBeforeAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        UndoableAction a = new UndoableAction(model);
+
+        a.setCursorPrior(model.getCursor());
+        a.setTextPrior(model.getLines());
+
         model.deleteBefore();
         model.removeSelection();
+
+        a.setCursorPosterior(model.getCursor());
+        a.setTextPosterior(model.getLines());
+
+        manager.push(a);
     }
 }

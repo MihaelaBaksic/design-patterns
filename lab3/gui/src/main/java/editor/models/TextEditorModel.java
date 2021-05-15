@@ -33,6 +33,19 @@ public class TextEditorModel implements LinesIterable {
         return lines.get(index);
     }
 
+    public List<String> getLines() { return lines; }
+
+    public Location getCursor() { return cursorLocation; }
+
+    public void setLines(List<String> lines) {
+        this.lines = lines;
+        notifyObservers();
+    }
+
+    public void setCursorLocation(Location cursorLocation){
+        this.cursorLocation = new Location(cursorLocation);
+    }
+
     @Override
     public Iterator<String> allLines() {
         return lines.iterator();

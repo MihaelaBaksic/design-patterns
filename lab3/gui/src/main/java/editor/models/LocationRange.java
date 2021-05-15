@@ -10,6 +10,11 @@ public class LocationRange{
         end = new Location(0, 0);
     }
 
+    public LocationRange(LocationRange o){
+        start = new Location(o.start);
+        end = new Location(o.end);
+    }
+
     public Location start;
     public Location end;
 

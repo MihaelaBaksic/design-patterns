@@ -157,12 +157,12 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         this.setLayout(new BorderLayout());
         this.setFocusable(true);
 
-        model = new TextEditorModel("Kjduet\nLOLOLOaushaihs asduhsh sshk\njie\nej");
+        model = new TextEditorModel("Kako je danas\nlijep i suncan dan.\nBas krasno.");
         model.addCursorObserver(this);
         model.addTextObserver(this);
         clipboard.addObserver(this);
 
-        deleteAfter = new DeleteAfterAction("Delete",model);
+        deleteAfter = new DeleteAfterAction("Delete",model, undoManager);
         //deleteAfter.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE));
         this.getInputMap().put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "deleteKey");
         this.getActionMap().put("deleteKey", deleteAfter);
@@ -178,20 +178,20 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         cursorToStart = new CursorToDocumentStartAction("Cursor to document start", model);
         cursorToEnd = new CursorToDocumentEndAction("Cursoe to document end", model);
 
-        clearDocument = new ClearDocumentAction("Clear document", model);
-        deleteSelection = new DeleteSelectionAction("Delete selection", model);
+        clearDocument = new ClearDocumentAction("Clear document", model, undoManager);
+        deleteSelection = new DeleteSelectionAction("Delete selection", model, undoManager);
         exitAction = new ExitAction("Exit", this);
 
         copyAction = new CopyAction("Copy", model, clipboard);
         copyAction.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control C"));
 
-        cutAction = new CutAction("Cut", model, clipboard);
+        cutAction = new CutAction("Cut", model, clipboard, undoManager);
         cutAction.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control X"));
 
-        pasteAction = new PasteAction("Paste", model, clipboard);
+        pasteAction = new PasteAction("Paste", model, clipboard, undoManager);
         pasteAction.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control V"));
 
-        pasteAndTakeAction = new PasteAndTakeAction("Paste and Take", model, clipboard);
+        pasteAndTakeAction = new PasteAndTakeAction("Paste and Take", model, clipboard, undoManager);
         pasteAndTakeAction.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control shift V"));
 
         redoAction = new RedoAction("Redo", undoManager);
