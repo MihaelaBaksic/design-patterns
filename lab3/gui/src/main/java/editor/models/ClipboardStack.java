@@ -25,11 +25,17 @@ public class ClipboardStack {
     }
 
     public String pop(){
-        return texts.pop();
+        if (!isEmpty())
+            return texts.pop();
+
+        return "";
     }
 
     public String peekTop(){
-        return texts.peek();
+        if(!isEmpty())
+            return texts.peek();
+
+        return "";
     }
 
     public boolean isEmpty(){

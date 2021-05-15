@@ -49,7 +49,7 @@ public class TextEditorModel implements LinesIterable {
         cursorLocation.x = 0;
         cursorLocation.y = 0;
 
-        notifyTextObservers();
+        notifyObservers();
     }
 
     public void addCursorObserver(CursorObserver o){
@@ -68,9 +68,12 @@ public class TextEditorModel implements LinesIterable {
         textObservers.remove(o);
     }
 
-    private void notifyCursorObservers(){
+    private void notifyObservers(){
         for(var observer : cursorObservers){
             observer.updateCursorLocation(this.cursorLocation);
+        }
+        for(var observer : textObservers){
+            observer.updateText();
         }
     }
 
@@ -78,27 +81,22 @@ public class TextEditorModel implements LinesIterable {
         cursorLocation.x = 0;
         cursorLocation.y = 0;
 
-        notifyCursorObservers();
+        notifyObservers();
     }
 
     public void cursorToEnd(){
         cursorLocation.y = lines.size() > 0 ? lines.size()-1 : 0;
         cursorLocation.x = lines.get(lines.size()-1).length();
 
-        notifyCursorObservers();
+        notifyObservers();
     }
 
 
-    private void notifyTextObservers(){
-        for(var observer : textObservers){
-            observer.updateText();
-        }
-    }
 
     public void moveCursorLeft(){
         if(cursorLocation.x > 0) {
             cursorLocation.x--;
-            notifyCursorObservers();
+            notifyObservers();
         }
     }
 
@@ -106,7 +104,7 @@ public class TextEditorModel implements LinesIterable {
         int n = lines.get(cursorLocation.y).length();
         if( cursorLocation.x < n) {
             cursorLocation.x++;
-            notifyCursorObservers();
+            notifyObservers();
         }
     }
 
@@ -118,7 +116,7 @@ public class TextEditorModel implements LinesIterable {
             if (n < cursorLocation.x)
                 cursorLocation.x = n;
 
-            notifyCursorObservers();
+            notifyObservers();
         }
     }
 
@@ -132,20 +130,20 @@ public class TextEditorModel implements LinesIterable {
             if(n < cursorLocation.x)
                 cursorLocation.x = n;
 
-            notifyCursorObservers();
+            notifyObservers();
         }
     }
 
     public void removeSelection(){
         this.selectionRange = new LocationRange();
-        notifyTextObservers();
+        notifyObservers();
     }
 
     public void deleteBefore(){
 
         if(selectionRange.isSelected()){
             deleteRange(this.selectionRange);
-            notifyTextObservers();
+            notifyObservers();
             return;
         }
 
@@ -173,15 +171,15 @@ public class TextEditorModel implements LinesIterable {
 
         }
 
-        notifyTextObservers();
-        notifyCursorObservers();
+        notifyObservers();
+
     }
 
     public void deleteAfter(){
 
         if(selectionRange.isSelected()){
             deleteRange(this.selectionRange);
-            notifyTextObservers();
+            notifyObservers();
             return;
         }
 
@@ -202,7 +200,7 @@ public class TextEditorModel implements LinesIterable {
             lines.remove(cursorLocation.y+1);
 
         }
-        notifyTextObservers();
+        notifyObservers();
     }
     public void deleteRange(LocationRange r){
 
@@ -225,8 +223,7 @@ public class TextEditorModel implements LinesIterable {
             indexLastLine--;
         }
         cursorLocation = new Location(minLocation);
-        notifyTextObservers();
-        notifyCursorObservers();
+        notifyObservers();
     }
 
     public LocationRange getSelectionRange(){
@@ -235,7 +232,7 @@ public class TextEditorModel implements LinesIterable {
 
     public void setSelectionRange(LocationRange range){
         this.selectionRange = range;
-        notifyCursorObservers();
+        notifyObservers();
     }
 
     public void insert(Character c){
@@ -260,13 +257,13 @@ public class TextEditorModel implements LinesIterable {
         }
 
         removeSelection();
-        System.out.println(lines);
-        notifyTextObservers();
-        notifyCursorObservers();
+        notifyObservers();
     }
 
     public void insert(String text){
-
+        for(char c: text.toCharArray()){
+            insert(c);
+        }
     }
 
     public String getSelectedText(){
@@ -292,12 +289,6 @@ public class TextEditorModel implements LinesIterable {
         return text;
     }
 
-    public void deleteSelectedText(){
-        if(!selectionRange.isSelected())
-            return;
-
-    }
-
     private void enter(){
         String currentLine = lines.get(cursorLocation.y);
 
@@ -307,8 +298,5 @@ public class TextEditorModel implements LinesIterable {
         cursorLocation.y++;
         cursorLocation.x = 0;
     }
-
-
-
 
 }

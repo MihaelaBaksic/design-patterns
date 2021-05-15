@@ -3,11 +3,16 @@ package editor.components;
 
 import editor.*;
 import editor.actions.*;
+import editor.actions.clip.CopyAction;
+import editor.actions.clip.CutAction;
+import editor.actions.clip.PasteAction;
+import editor.actions.clip.PasteAndTakeAction;
 import editor.actions.cursor.CursorToDocumentEndAction;
 import editor.actions.cursor.CursorToDocumentStartAction;
 import editor.actions.deletion.ClearDocumentAction;
 import editor.actions.deletion.DeleteAfterAction;
 import editor.actions.deletion.DeleteBeforeAction;
+import editor.actions.deletion.DeleteSelectionAction;
 import editor.actions.selection.SelectDownAction;
 import editor.actions.selection.SelectLeftAction;
 import editor.actions.selection.SelectRightAction;
@@ -38,30 +43,41 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
     private Action selectUp;
     private Action selectDown;
     private Action clearDocument;
+    private Action deleteSelection;
     private Action cursorToStart;
     private Action cursorToEnd;
     private Action exitAction;
+    private Action copyAction;
+    private Action cutAction;
+    private Action pasteAction;
+    private Action pasteAndTakeAction;
 
+    private JButton copy;
+    private JButton paste;
+    private JButton cut;
+    private JButton undo;
+    private JButton redo;
 
     private ClipboardStack clipboard;
-
     private TextEditorModel model;
-
     private UndoManager undoManager = UndoManager.getInstance();
-
     private JMenuBar menuBar;
+    private JToolBar toolBar;
 
     public TextEditor(){
         super();
         clipboard = new ClipboardStack();
         this.menuBar = new JMenuBar();
+        this.toolBar = new Toolbar();
         init();
         initMenu();
+        initToolbar();
     }
 
     public JMenuBar getMenuBar() {
         return menuBar;
     }
+    public JToolBar getToolBar() { return toolBar; }
 
     private void initMenu(){
         JMenu menuFile = new JMenu("File");
@@ -77,11 +93,11 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
         JMenu menuEdit = new JMenu("Edit");
         JMenuItem itemUndo = new JMenuItem("Undo");
         JMenuItem itemRedo = new JMenuItem("Redo");
-        JMenuItem itemCut = new JMenuItem("Cut");
-        JMenuItem itemCopy = new JMenuItem("Copy");
-        JMenuItem itemPaste = new JMenuItem("Paste");
-        JMenuItem itemPasteAndTake = new JMenuItem("Paste and Take");
-        JMenuItem itemDeleteSelection = new JMenuItem("Delete selection");
+        JMenuItem itemCut = new JMenuItem(cutAction);
+        JMenuItem itemCopy = new JMenuItem(copyAction);
+        JMenuItem itemPaste = new JMenuItem(pasteAction);
+        JMenuItem itemPasteAndTake = new JMenuItem(pasteAndTakeAction);
+        JMenuItem itemDeleteSelection = new JMenuItem(deleteSelection);
         JMenuItem itemClearDocument = new JMenuItem(clearDocument);
 
 
@@ -134,9 +150,20 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
         cursorToEnd = new CursorToDocumentEndAction("Cursoe to document end", model);
 
         clearDocument = new ClearDocumentAction("Clear document", model);
+        deleteSelection = new DeleteSelectionAction("Delete selection", model);
         exitAction = new ExitAction("Exit", this);
 
+        copyAction = new CopyAction("Copy", model, clipboard);
+        copyAction.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control C"));
 
+        cutAction = new CutAction("Cut", model, clipboard);
+        cutAction.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control X"));
+
+        pasteAction = new PasteAction("Paste", model, clipboard);
+        pasteAction.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control V"));
+
+        pasteAndTakeAction = new PasteAndTakeAction("Paste and Take", model, clipboard);
+        pasteAndTakeAction.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control shift V"));
 
         this.addKeyListener(new KeyListener() {
             @Override
@@ -180,6 +207,8 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
                         }
                         break;
                     default:
+                        if(e.isControlDown())
+                            return;
                         if(!e.isShiftDown()){
                             code = Character.toLowerCase(code);
                         }
@@ -190,6 +219,26 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
             @Override
             public void keyReleased(KeyEvent e) {}
         });
+
+    }
+
+    private void initToolbar(){
+        undo = new JButton("Undo");
+        undo.setFocusable(false);
+        redo = new JButton("Redo");
+        redo.setFocusable(false);
+        cut = new JButton(cutAction);
+        cut.setFocusable(false);
+        copy = new JButton(copyAction);
+        copy.setFocusable(false);
+        paste = new JButton(pasteAction);
+        paste.setFocusable(false);
+
+        toolBar.add(undo);
+        toolBar.add(redo);
+        toolBar.add(cut);
+        toolBar.add(copy);
+        toolBar.add(paste);
 
     }
 
@@ -236,8 +285,6 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver {
         //paint cursor
         Location cursorLocation = model.getCursorLocation();
         g.drawLine(cursorLocation.x*w, cursorLocation.y*h + diff, cursorLocation.x*w, (cursorLocation.y+1)*h + diff);
-
-        System.out.println(model.getSelectedText());
 
     }
 

@@ -1,7 +1,6 @@
 package editor;
 
 import editor.components.TextEditor;
-import editor.components.Toolbar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,8 +15,9 @@ public class Main extends JFrame{
         this.getContentPane().setLayout(new BorderLayout());
         var menu = new Menu();
 
-        this.getContentPane().add(new Toolbar(), BorderLayout.NORTH);
+
         TextEditor textEditor = new TextEditor();
+        this.getContentPane().add(textEditor.getToolBar(), BorderLayout.NORTH);
         this.getContentPane().add(textEditor, BorderLayout.CENTER);
         this.setJMenuBar(textEditor.getMenuBar());
 
