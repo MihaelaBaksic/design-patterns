@@ -15,9 +15,16 @@ public class Main extends JFrame{
         this.getContentPane().setLayout(new BorderLayout());
 
         TextEditor textEditor = new TextEditor();
-        this.getContentPane().add(textEditor.getToolBar(), BorderLayout.NORTH);
-        //this.getContentPane().add(textEditor.getStatusBar(), BorderLayout.NORTH);
+
+        JPanel header = new JPanel();
+        header.setLayout(new BorderLayout());
+
+        header.add(textEditor.getToolBar(), BorderLayout.NORTH);
+        header.add(textEditor.getStatusBar(), BorderLayout.SOUTH);
+
+
         this.getContentPane().add(textEditor, BorderLayout.CENTER);
+        this.getContentPane().add(header, BorderLayout.NORTH);
         this.setJMenuBar(textEditor.getMenuBar());
 
         this.setSize(600, 600);

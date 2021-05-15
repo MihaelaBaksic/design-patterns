@@ -1,7 +1,5 @@
 package editor.models;
 
-import editor.LinesIterable;
-import editor.observers.ClipboardObserver;
 import editor.observers.CursorObserver;
 import editor.observers.TextObserver;
 
