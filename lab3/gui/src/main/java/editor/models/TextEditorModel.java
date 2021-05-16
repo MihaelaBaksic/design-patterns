@@ -1,5 +1,6 @@
 package editor.models;
 
+import editor.LinesIterator;
 import editor.observers.CursorObserver;
 import editor.observers.TextObserver;
 
@@ -44,14 +45,14 @@ public class TextEditorModel {
         this.cursorLocation = new Location(cursorLocation);
     }
 
-    public Iterator<String> allLines() {
-        return lines.iterator();
+    public LinesIterator allLines() {
+        return new LinesIterator(lines);
     }
 
     public int linesNumber(){ return lines.size(); }
 
-    public Iterator<String> linesRange(int index1, int index2) {
-        return lines.subList(index1, index2).iterator();
+    public LinesIterator linesRange(int index1, int index2) {
+        return new LinesIterator(lines, index1, index2);
     }
 
     public void clear(){
