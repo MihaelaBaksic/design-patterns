@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class Main extends JFrame{
 
-    public Main() {
+    public Main() throws Exception {
         super();
 
         this.setTitle("TextEditor");
@@ -33,7 +33,11 @@ public class Main extends JFrame{
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new Main();
+            try {
+                JFrame frame = new Main();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 }

@@ -1,7 +1,7 @@
 package plugin;
 
 import editor.UndoManager;
-import editor.components.TextEditor;
+
 import editor.models.ClipboardStack;
 import editor.models.TextEditorModel;
 

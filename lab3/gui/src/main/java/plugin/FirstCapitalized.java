@@ -14,9 +14,9 @@ public class FirstCapitalized implements Plugin{
         return name;
     }
 
-    public FirstCapitalized(String name, String description){
-        this.name = name;
-        this.description = description;
+    public FirstCapitalized(){
+        this.name = "Capitalize first";
+        this.description = "Capitalizes first letters of each word";
     }
 
     @Override
@@ -26,6 +26,6 @@ public class FirstCapitalized implements Plugin{
 
     @Override
     public void execute(TextEditorModel model, UndoManager manager, ClipboardStack clipboard) {
-
+        System.out.println("First cap");
     }
 }

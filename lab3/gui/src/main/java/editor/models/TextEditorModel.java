@@ -5,7 +5,6 @@ import editor.observers.CursorObserver;
 import editor.observers.TextObserver;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class TextEditorModel {
@@ -91,7 +90,6 @@ public class TextEditorModel {
     }
 
     public void cursorToStart(){
-        cursorLocation.x = 0;
         cursorLocation.x = 0;
         cursorLocation.y = 0;
 

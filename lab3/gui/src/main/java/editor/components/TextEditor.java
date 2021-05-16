@@ -26,6 +26,8 @@ import editor.models.TextEditorModel;
 import editor.observers.ClipboardObserver;
 import editor.observers.CursorObserver;
 import editor.observers.TextObserver;
+import plugin.Plugin;
+import plugin.PluginLoader;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +35,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ServiceLoader;
 
 public class TextEditor extends JPanel implements CursorObserver, TextObserver, ClipboardObserver {
 
@@ -88,7 +92,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
     private JLabel statusBar;
 
 
-    public TextEditor(){
+    public TextEditor() throws Exception {
         super();
         clipboard = new ClipboardStack();
         undoManager = UndoManager.getInstance();
@@ -107,7 +111,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
     public JToolBar getToolBar() { return toolBar; }
     public JLabel getStatusBar() { return statusBar; }
 
-    private void initMenu(){
+    private void initMenu() throws Exception {
         JMenu menuFile = new JMenu("File");
         itemOpen = new JMenuItem("Open");
         itemSave = new JMenuItem("Save");
@@ -150,9 +154,24 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
 
         JMenu menuPlugins = new JMenu("Plugins");
 
+        //ServiceLoader<Plugin> plugins = PluginLoader.load();
+        List<Plugin> plugins = PluginLoader.loadPlugins();
+        for(var p : plugins){
+            JMenuItem item = new JMenuItem(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    p.execute(model, undoManager, clipboard);
+                }
+            });
+            item.setText(p.getName());
+            menuPlugins.add(item);
+        }
+
+
         menuBar.add(menuFile);
         menuBar.add(menuEdit);
         menuBar.add(menuMove);
+        menuBar.add(menuPlugins);
     }
 
     private void init(){

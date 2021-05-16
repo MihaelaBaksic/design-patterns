@@ -11,9 +11,9 @@ public class Statistics implements Plugin{
     private String name;
     private String description;
 
-    public Statistics(String name, String description){
-        this.name = name;
-        this.description = description;
+    public Statistics(){
+        this.name = "Statistics";
+        this.description = "Statistics on word count, characters and lines";
     }
 
     @Override
@@ -38,6 +38,7 @@ public class Statistics implements Plugin{
                     return l.replaceAll("\s", "").length();
                 }).sum();
 
-        JOptionPane.showMessageDialog(null, "Rows: " + rows + "  Words: " + words + "  Characters: " + characters);
+        JOptionPane.showMessageDialog(null, "Rows: " + rows + "  Words: " + words + "  Characters: " + characters,
+                getName(), JOptionPane.INFORMATION_MESSAGE);
     }
 }
