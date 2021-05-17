@@ -32,6 +32,7 @@ import plugin.PluginLoader;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Iterator;
@@ -210,9 +211,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         undoAction = new UndoAction("Undo", undoManager);
 
 
-        this.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {}
+        this.addKeyListener(new KeyAdapter() {
 
             @Override
             public void keyPressed(KeyEvent e) {
@@ -260,9 +259,6 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
                         new InsertCharAction("Insert char", model, (char) code, undoManager).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
                 }
             }
-
-            @Override
-            public void keyReleased(KeyEvent e) {}
         });
 
     }
@@ -291,7 +287,6 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
     protected void paintComponent(Graphics g){
 
         setVisibilities();
-
         super.paintComponent(g);
         g.setFont(font);
 
@@ -315,12 +310,9 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
             g.fillRect(min.x*w, min.y*h + diff, (max.x-min.x)*w, h);
         }
         else{
-            //min from x to end
-            g.fillRect(min.x*w, min.y*h + diff, getWidth() - (min.x)*w, h);
-            //all full rows
-            g.fillRect(0, (min.y+1)*h + diff, getWidth(), h*(rowDistance-1));
-            //last row from 0 to x
-            g.fillRect(0, max.y*h + diff, max.x*w , h );
+            g.fillRect(min.x*w, min.y*h + diff, getWidth() - (min.x)*w, h); //min from x to end
+            g.fillRect(0, (min.y+1)*h + diff, getWidth(), h*(rowDistance-1)); //all full rows
+            g.fillRect(0, max.y*h + diff, max.x*w , h ); //last row from 0 to x
         }
 
         // paint text
