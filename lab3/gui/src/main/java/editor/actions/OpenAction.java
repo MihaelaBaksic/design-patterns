@@ -38,7 +38,9 @@ public class OpenAction extends AbstractAction {
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(f));
                 lines = reader.lines().collect(Collectors.toList());
-            } catch (FileNotFoundException fileNotFoundException) {
+                reader.close();
+            } catch (IOException exception ) {
+                exception.printStackTrace();
                 return;
             }
 
