@@ -45,6 +45,14 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
     private static final long serialVersionUID = 1L;
     private static final Font font = new Font("Monospaced", Font.PLAIN, 12);
 
+    private ClipboardStack clipboard;
+    private TextEditorModel model;
+    private UndoManager undoManager;
+    private JMenuBar menuBar;
+    private JToolBar toolBar;
+    private JLabel statusBar;
+
+
     private Action deleteAfter;
     private Action deleteBefore;
     private Action selectLeft;
@@ -86,13 +94,6 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
     private JMenuItem itemCursorToStart;
     private JMenuItem itemCursorToEnd;
     private JMenuItem deleteAfterItem;
-
-    private ClipboardStack clipboard;
-    private TextEditorModel model;
-    private UndoManager undoManager;
-    private JMenuBar menuBar;
-    private JToolBar toolBar;
-    private JLabel statusBar;
 
 
     public TextEditor() throws Exception {
@@ -210,8 +211,9 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
     }
 
     private void initMenu() throws Exception {
+
         JMenu menuFile = new JMenu("File");
-        itemOpen = new JMenuItem("Open");
+        itemOpen = new JMenuItem(new OpenAction("Open", model, undoManager));
         itemSave = new JMenuItem(saveAction);
         itemExit = new JMenuItem(exitAction);
 
