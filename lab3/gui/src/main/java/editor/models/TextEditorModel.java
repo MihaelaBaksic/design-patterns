@@ -23,6 +23,14 @@ public class TextEditorModel {
         selectionRange = new LocationRange();
     }
 
+    public void addCursorObserver(CursorObserver o){
+        cursorObservers.add(o);
+    }
+
+    public void addTextObserver(TextObserver o){
+        textObservers.add(o);
+    }
+
     public Location getCursorLocation(){
         return cursorLocation;
     }
@@ -58,26 +66,7 @@ public class TextEditorModel {
         lines = new ArrayList<>();
         lines.add("");
 
-        cursorLocation.x = 0;
-        cursorLocation.y = 0;
-
-        notifyObservers();
-    }
-
-    public void addCursorObserver(CursorObserver o){
-        cursorObservers.add(o);
-    }
-
-    public void removeCursorObserver(CursorObserver o){
-        cursorObservers.remove(o);
-    }
-
-    public void addTextObserver(TextObserver o){
-        textObservers.add(o);
-    }
-
-    public void removeTextObserver(TextObserver o){
-        textObservers.remove(o);
+        cursorToStart();
     }
 
     private void notifyObservers(){
@@ -102,8 +91,6 @@ public class TextEditorModel {
 
         notifyObservers();
     }
-
-
 
     public void moveCursorLeft(){
         if(cursorLocation.x > 0) {
@@ -179,18 +166,15 @@ public class TextEditorModel {
 
             cursorLocation.y--;
             cursorLocation.x = currLen;
-
         }
 
         notifyObservers();
-
     }
 
     public void deleteAfter(){
 
         if(selectionRange.isSelected()){
             deleteRange(this.selectionRange);
-            notifyObservers();
             return;
         }
 
@@ -213,6 +197,7 @@ public class TextEditorModel {
         }
         notifyObservers();
     }
+
     public void deleteRange(LocationRange r){
 
         if(!r.isSelected())
@@ -246,19 +231,19 @@ public class TextEditorModel {
         notifyObservers();
     }
 
-    public void insert(Character c){
+    public boolean insert(Character c){
 
         if( (c > 126 || c < 32) && c!=10  )
-            return;
+            return false;
 
         if(selectionRange.isSelected()){
             deleteRange(selectionRange);
             removeSelection();
         }
 
-        if(c==10)
+        if(c==10) {
             enter();
-
+        }
         else{
             StringBuilder sb = new StringBuilder(lines.get(cursorLocation.y));
             String newLine = sb.insert(cursorLocation.x, c).toString();
@@ -269,6 +254,17 @@ public class TextEditorModel {
 
         removeSelection();
         notifyObservers();
+        return true;
+    }
+
+    private void enter(){
+        String currentLine = lines.get(cursorLocation.y);
+
+        lines.set(cursorLocation.y, currentLine.substring(0, cursorLocation.x));
+        lines.add(cursorLocation.y+1, currentLine.substring(cursorLocation.x));
+
+        cursorLocation.y++;
+        cursorLocation.x = 0;
     }
 
     public void insert(String text){
@@ -295,19 +291,8 @@ public class TextEditorModel {
         for(int i=min.y+1; i<max.y; i++){ // middle lines
             text+="\n" + lines.get(i);
         }
-
         text += "\n" + lines.get(max.y).substring(0, max.y); // last line
         return text;
-    }
-
-    private void enter(){
-        String currentLine = lines.get(cursorLocation.y);
-
-        lines.set(cursorLocation.y, currentLine.substring(0, cursorLocation.x));
-        lines.add(cursorLocation.y+1, currentLine.substring(cursorLocation.x));
-
-        cursorLocation.y++;
-        cursorLocation.x = 0;
     }
 
 }

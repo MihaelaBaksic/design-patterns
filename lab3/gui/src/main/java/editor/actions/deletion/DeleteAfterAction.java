@@ -24,16 +24,12 @@ public class DeleteAfterAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
 
         UndoableAction a = new UndoableAction(model);
-
-        a.setCursorPrior(model.getCursor());
-        a.setTextPrior(model.getLines());
+        a.setPrior(model.getLines(), model.getCursor());
 
         model.deleteAfter();
         model.removeSelection();
 
-        a.setCursorPosterior(model.getCursor());
-        a.setTextPosterior(model.getLines());
-
+        a.setPosterior(model.getLines(), model.getCursor());
         manager.push(a);
     }
 }

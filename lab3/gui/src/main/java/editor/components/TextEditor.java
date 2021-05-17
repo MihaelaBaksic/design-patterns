@@ -26,6 +26,7 @@ import editor.models.TextEditorModel;
 import editor.observers.ClipboardObserver;
 import editor.observers.CursorObserver;
 import editor.observers.TextObserver;
+import editor.observers.UndoManagerObserver;
 import plugin.Plugin;
 import plugin.PluginLoader;
 
@@ -39,7 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
 
-public class TextEditor extends JPanel implements CursorObserver, TextObserver, ClipboardObserver {
+public class TextEditor extends JPanel implements CursorObserver, TextObserver, ClipboardObserver, UndoManagerObserver {
 
     private static final long serialVersionUID = 1L;
     private static final Font font = new Font("Monospaced", Font.PLAIN, 12);
@@ -59,6 +60,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
     private Action cutAction;
     private Action pasteAction;
     private Action pasteAndTakeAction;
+    private Action saveAction;
 
     private Action redoAction;
     private Action undoAction;
@@ -104,6 +106,10 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         initMenu();
         initToolbar();
         initStatusBar();
+
+        enableSelectionActions();
+        enableUndoActions();
+        enableClipboardActions();
     }
 
     public JMenuBar getMenuBar() {
@@ -112,10 +118,101 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
     public JToolBar getToolBar() { return toolBar; }
     public JLabel getStatusBar() { return statusBar; }
 
+
+
+    private void init(){
+        this.setLayout(new BorderLayout());
+        this.setFocusable(true);
+
+        model = new TextEditorModel("Kako je danas\nlijep i suncan dan.\nBas krasno.");
+        model.addCursorObserver(this);
+        model.addTextObserver(this);
+        clipboard.addObserver(this);
+        undoManager.addObserver(this);
+
+        deleteAfter = new DeleteAfterAction("Delete", model, undoManager);
+        this.getInputMap().put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "deleteKey");
+        this.getActionMap().put("deleteKey", deleteAfter);
+        deleteBefore = new DeleteBeforeAction("Back space", model, undoManager);
+
+        selectLeft = new SelectLeftAction("Select left", model);
+        selectRight = new SelectRightAction("Select right", model);
+        selectUp = new SelectUpAction("Select up", model);
+        selectDown = new SelectDownAction("Select down", model);
+
+        cursorToStart = new CursorToDocumentStartAction("Cursor to document start", model);
+        cursorToEnd = new CursorToDocumentEndAction("Cursor to document end", model);
+
+        clearDocument = new ClearDocumentAction("Clear document", model, undoManager);
+        deleteSelection = new DeleteSelectionAction("Delete selection", model, undoManager);
+        exitAction = new ExitAction("Exit", this);
+
+        copyAction = new CopyAction("Copy", model, clipboard);
+        cutAction = new CutAction("Cut", model, clipboard, undoManager);
+        pasteAction = new PasteAction("Paste", model, clipboard, undoManager);
+        pasteAndTakeAction = new PasteAndTakeAction("Paste and Take", model, clipboard, undoManager);
+
+        redoAction = new RedoAction("Redo", undoManager);
+        undoAction = new UndoAction("Undo", undoManager);
+
+        saveAction = new SaveAction("Save", model, undoManager);
+
+        this.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int code = e.getKeyCode();
+                switch (code){
+                    case KeyEvent.VK_LEFT:
+                        if(e.isShiftDown())
+                            selectLeft.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                        else{
+                            model.moveCursorLeft();
+                            model.removeSelection();
+                        }
+                        break;
+                    case KeyEvent.VK_UP:
+                        if(e.isShiftDown())
+                            selectUp.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                        else {
+                            model.moveCursorUp();
+                            model.removeSelection();
+                        }
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        if(e.isShiftDown())
+                            selectRight.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                        else{
+                            model.moveCursorRight();
+                            model.removeSelection();
+                        }
+                        break;
+                    case KeyEvent.VK_DOWN:
+                        if(e.isShiftDown())
+                            selectDown.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                        else
+                        {
+                            model.moveCursorDown();
+                            model.removeSelection();
+                        }
+                        break;
+                    default:
+                        if(e.isControlDown())
+                            return;
+                        if(!e.isShiftDown()){
+                            code = Character.toLowerCase(code);
+                        }
+                        new InsertCharAction("Insert char", model, (char) code, undoManager).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                }
+            }
+        });
+
+    }
+
     private void initMenu() throws Exception {
         JMenu menuFile = new JMenu("File");
         itemOpen = new JMenuItem("Open");
-        itemSave = new JMenuItem("Save");
+        itemSave = new JMenuItem(saveAction);
         itemExit = new JMenuItem(exitAction);
 
         menuFile.add(itemOpen);
@@ -175,94 +272,6 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         menuBar.add(menuPlugins);
     }
 
-    private void init(){
-        this.setLayout(new BorderLayout());
-        this.setFocusable(true);
-
-        model = new TextEditorModel("Kako je danas\nlijep i suncan dan.\nBas krasno.");
-        model.addCursorObserver(this);
-        model.addTextObserver(this);
-        clipboard.addObserver(this);
-
-        deleteAfter = new DeleteAfterAction("Delete", model, undoManager);
-        this.getInputMap().put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "deleteKey");
-        this.getActionMap().put("deleteKey", deleteAfter);
-
-        deleteBefore = new DeleteBeforeAction("Back space", model, undoManager);
-
-        selectLeft = new SelectLeftAction("Select left", model);
-        selectRight = new SelectRightAction("Select right", model);
-        selectUp = new SelectUpAction("Select up", model);
-        selectDown = new SelectDownAction("Select down", model);
-
-        cursorToStart = new CursorToDocumentStartAction("Cursor to document start", model);
-        cursorToEnd = new CursorToDocumentEndAction("Cursoe to document end", model);
-
-        clearDocument = new ClearDocumentAction("Clear document", model, undoManager);
-        deleteSelection = new DeleteSelectionAction("Delete selection", model, undoManager);
-        exitAction = new ExitAction("Exit", this);
-
-        copyAction = new CopyAction("Copy", model, clipboard);
-        cutAction = new CutAction("Cut", model, clipboard, undoManager);
-        pasteAction = new PasteAction("Paste", model, clipboard, undoManager);
-        pasteAndTakeAction = new PasteAndTakeAction("Paste and Take", model, clipboard, undoManager);
-
-        redoAction = new RedoAction("Redo", undoManager);
-        undoAction = new UndoAction("Undo", undoManager);
-
-
-        this.addKeyListener(new KeyAdapter() {
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                int code = e.getKeyCode();
-                switch (code){
-                    case KeyEvent.VK_LEFT:
-                        if(e.isShiftDown())
-                            selectLeft.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
-                        else{
-                            model.moveCursorLeft();
-                            model.removeSelection();
-                        }
-                        break;
-                    case KeyEvent.VK_UP:
-                        if(e.isShiftDown())
-                            selectUp.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
-                        else {
-                            model.moveCursorUp();
-                            model.removeSelection();
-                        }
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        if(e.isShiftDown())
-                            selectRight.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
-                        else{
-                            model.moveCursorRight();
-                            model.removeSelection();
-                        }
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        if(e.isShiftDown())
-                            selectDown.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
-                        else
-                        {
-                            model.moveCursorDown();
-                            model.removeSelection();
-                        }
-                        break;
-                    default:
-                        if(e.isControlDown())
-                            return;
-                        if(!e.isShiftDown()){
-                            code = Character.toLowerCase(code);
-                        }
-                        new InsertCharAction("Insert char", model, (char) code, undoManager).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
-                }
-            }
-        });
-
-    }
-
     private void initToolbar(){
         undo = new JButton(undoAction);
         undo.setFocusable(false);
@@ -283,10 +292,15 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
 
     }
 
+    private void initStatusBar(){
+        statusBar.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+        setStatusBarText();
+        statusBar.setVisible(true);
+    }
+
     @Override
     protected void paintComponent(Graphics g){
 
-        setVisibilities();
         super.paintComponent(g);
         g.setFont(font);
 
@@ -294,10 +308,6 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         int w = g.getFontMetrics().charWidth('i');
         int asc = g.getFontMetrics().getAscent();
         int diff = Math.abs(h - asc);
-
-        System.out.println("h: " +h);
-        System.out.println("asc: " + asc);
-        System.out.println("diff: " + diff);
 
         //paint selection
         LocationRange selection = model.getSelectionRange();
@@ -329,60 +339,59 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         Location cursorLocation = model.getCursorLocation();
         g.drawLine(cursorLocation.x*w, cursorLocation.y*h + diff, cursorLocation.x*w, (cursorLocation.y+1)*h + diff);
 
-        //paint status bar
-        int x = model.getCursorLocation().x;
-        int y = model.getCursorLocation().y;
-        statusBar.setText("Cursor at (" + x + ", " + y + ")  Lines: " + model.linesNumber());
-    }
-
-    private void initStatusBar(){
-        statusBar.setBorder(BorderFactory.createLineBorder(Color.black, 1));
-        int x = model.getCursorLocation().x;
-        int y = model.getCursorLocation().y;
-        statusBar.setText("Cursor at (" + x + ", " + y + ")  Lines: " + model.linesNumber());
-        statusBar.setVisible(true);
     }
 
     @Override
     public void updateCursorLocation(Location loc) {
         repaint();
+        enableSelectionActions();
+        setStatusBarText();
     }
 
     @Override
     public void updateText() {
         repaint();
+        setStatusBarText();
     }
-
 
     @Override
     public void updateClipboard() {
-        // updating activity of action buttons related to clipboard
-        paste.setEnabled(!clipboard.isEmpty());
+        enableClipboardActions();
+    }
 
-        // updating activity of items related to clipboard
-        itemPaste.setEnabled(!clipboard.isEmpty());
-        itemPasteAndTake.setEnabled(!clipboard.isEmpty());
-
+    @Override
+    public void updateForUndo() {
+        enableUndoActions();
     }
 
 
-    private void setVisibilities(){
-        // updating activity of action buttons
-        paste.setEnabled(!clipboard.isEmpty());
-        copy.setEnabled(model.getSelectionRange().isSelected());
-        cut.setEnabled(model.getSelectionRange().isSelected());
+    private void enableUndoActions(){
         undo.setEnabled(!undoManager.undoStackEmpty());
         redo.setEnabled(!undoManager.redoStackEmpty());
-
-        // updating activity of menu items
-        itemPaste.setEnabled(!clipboard.isEmpty());
-        itemPasteAndTake.setEnabled(!clipboard.isEmpty());
-        itemCopy.setEnabled(model.getSelectionRange().isSelected());
-        itemCut.setEnabled(model.getSelectionRange().isSelected());
-        itemDeleteSelection.setEnabled(model.getSelectionRange().isSelected());
         itemUndo.setEnabled(!undoManager.undoStackEmpty());
         itemRedo.setEnabled(!undoManager.redoStackEmpty());
         itemSave.setEnabled(!undoManager.undoStackEmpty());
 
     }
+
+    private void enableSelectionActions(){
+        copy.setEnabled(model.getSelectionRange().isSelected());
+        cut.setEnabled(model.getSelectionRange().isSelected());
+        itemCopy.setEnabled(model.getSelectionRange().isSelected());
+        itemCut.setEnabled(model.getSelectionRange().isSelected());
+        itemDeleteSelection.setEnabled(model.getSelectionRange().isSelected());
+    }
+
+    private void enableClipboardActions(){
+        paste.setEnabled(!clipboard.isEmpty());
+        itemPaste.setEnabled(!clipboard.isEmpty());
+        itemPasteAndTake.setEnabled(!clipboard.isEmpty());
+    }
+
+    private void setStatusBarText(){
+        int x = model.getCursorLocation().x;
+        int y = model.getCursorLocation().y;
+        statusBar.setText("Cursor at (" + x + ", " + y + ")  Lines: " + model.linesNumber());
+    }
+
 }

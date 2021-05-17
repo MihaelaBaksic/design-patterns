@@ -1,13 +1,18 @@
 package editor;
 
 import editor.actions.undoables.EditAction;
+import editor.observers.UndoManagerObserver;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class UndoManager {
 
-    Stack<EditAction> undoStack;
-    Stack<EditAction> redoStack;
+    private Stack<EditAction> undoStack;
+    private Stack<EditAction> redoStack;
+
+    private List<UndoManagerObserver> observers;
 
     private static UndoManager instance;
 
@@ -21,6 +26,7 @@ public class UndoManager {
     private UndoManager(){
         undoStack = new Stack<>();
         redoStack = new Stack<>();
+        observers = new ArrayList<>();
     }
 
     public void undo(){
@@ -28,6 +34,8 @@ public class UndoManager {
             EditAction action = undoStack.pop();
             redoStack.push(action);
             action.executeUndo();
+
+            notifyObservers();
         }
     }
 
@@ -36,6 +44,8 @@ public class UndoManager {
             EditAction action = redoStack.pop();
             undoStack.push(action);
             action.executeDo();
+
+            notifyObservers();
         }
     }
 
@@ -43,6 +53,8 @@ public class UndoManager {
     public void push(EditAction c){
         redoStack.clear();
         undoStack.push(c);
+
+        notifyObservers();
     }
 
     public boolean undoStackEmpty(){
@@ -51,6 +63,22 @@ public class UndoManager {
 
     public boolean redoStackEmpty(){
         return redoStack.empty();
+    }
+
+    public void clear(){
+        undoStack.clear();
+        redoStack.clear();
+
+        notifyObservers();
+    }
+
+    public void addObserver(UndoManagerObserver observer){
+        this.observers.add(observer);
+    }
+
+    private void notifyObservers(){
+        for(var o : observers)
+            o.updateForUndo();
     }
 
 }

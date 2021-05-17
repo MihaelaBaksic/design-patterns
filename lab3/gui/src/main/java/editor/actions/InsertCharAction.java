@@ -24,13 +24,11 @@ public class InsertCharAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
 
         UndoableAction a = new UndoableAction(model);
+        a.setPrior(model.getLines(), model.getCursor());
 
-        a.setCursorPrior(model.getCursor());
-        a.setTextPrior(model.getLines());
-
-        model.insert(c);
-
-        a.setCursorPosterior(model.getCursor());
-        a.setTextPosterior(model.getLines());
+        if (model.insert(c)){
+            a.setPosterior(model.getLines(), model.getCursor());
+            manager.push(a);
+        }
     }
 }

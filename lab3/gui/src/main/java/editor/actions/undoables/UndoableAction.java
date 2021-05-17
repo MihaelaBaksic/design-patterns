@@ -25,19 +25,13 @@ public class UndoableAction implements EditAction {
         this.cursorPosterior = cursorPosterior;
     }
 
-    public void setTextPrior(List<String> textPrior) {
+    public void setPrior(List<String> textPrior, Location cursorPrior) {
         this.textPrior = new ArrayList<>(textPrior);
-    }
-
-    public void setCursorPrior(Location cursorPrior) {
         this.cursorPrior = new Location(cursorPrior);
     }
 
-    public void setTextPosterior(List<String> textPosterior) {
+    public void setPosterior(List<String> textPosterior, Location cursorPosterior) {
         this.textPosterior = new ArrayList<>(textPosterior);
-    }
-
-    public void setCursorPosterior(Location cursorPosterior) {
         this.cursorPosterior = new Location(cursorPosterior);
     }
 
