@@ -1,5 +1,6 @@
 package editor.actions;
 
+import editor.FileManager;
 import editor.UndoManager;
 import editor.models.TextEditorModel;
 
@@ -13,19 +14,18 @@ import java.util.stream.Collectors;
 public class OpenAction extends AbstractAction {
 
     private TextEditorModel model;
-    private UndoManager manager;
+    private UndoManager undoManager;
+    private FileManager fileManager;
 
-    public OpenAction(String name, TextEditorModel model, UndoManager manager){
+    public OpenAction(String name, TextEditorModel model, UndoManager undoManager, FileManager fileManager){
         super(name);
         this.model = model;
-        this.manager = manager;
+        this.undoManager = undoManager;
+        this.fileManager = fileManager;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        //if can be saved ask to save
-        // if yes, save
 
         JFileChooser chooser = new JFileChooser();
         int returnVal = chooser.showOpenDialog(null);
@@ -34,7 +34,7 @@ public class OpenAction extends AbstractAction {
             File f = chooser.getSelectedFile();
             System.out.println(f.getName() + " opened");
 
-            List<String> lines = new ArrayList<>();
+            List<String> lines;
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(f));
                 lines = reader.lines().collect(Collectors.toList());
@@ -42,11 +42,12 @@ public class OpenAction extends AbstractAction {
                 return;
             }
 
+            fileManager.setFile(f);
 
             model.clear();
             model.setLines(lines);
             model.cursorToStart();
-            manager.clear();
+            undoManager.clear();
         }
 
     }

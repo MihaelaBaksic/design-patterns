@@ -51,6 +51,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
     private JMenuBar menuBar;
     private JToolBar toolBar;
     private JLabel statusBar;
+    private FileManager fileManager;
 
 
     private Action deleteAfter;
@@ -103,6 +104,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         this.menuBar = new JMenuBar();
         this.toolBar = new Toolbar();
         this.statusBar = new JLabel();
+        this.fileManager = FileManager.getInstance();
         init();
         initMenu();
         initToolbar();
@@ -125,7 +127,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         this.setLayout(new BorderLayout());
         this.setFocusable(true);
 
-        model = new TextEditorModel("Kako je danas\nlijep i suncan dan.\nBas krasno.");
+        model = new TextEditorModel("");
         model.addCursorObserver(this);
         model.addTextObserver(this);
         clipboard.addObserver(this);
@@ -156,7 +158,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         redoAction = new RedoAction("Redo", undoManager);
         undoAction = new UndoAction("Undo", undoManager);
 
-        saveAction = new SaveAction("Save", model, undoManager);
+        saveAction = new SaveAction("Save", model, undoManager, fileManager);
 
         this.addKeyListener(new KeyAdapter() {
 
@@ -213,7 +215,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
     private void initMenu() throws Exception {
 
         JMenu menuFile = new JMenu("File");
-        itemOpen = new JMenuItem(new OpenAction("Open", model, undoManager));
+        itemOpen = new JMenuItem(new OpenAction("Open", model, undoManager, fileManager));
         itemSave = new JMenuItem(saveAction);
         itemExit = new JMenuItem(exitAction);
 
