@@ -300,6 +300,10 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         int asc = g.getFontMetrics().getAscent();
         int diff = Math.abs(h - asc);
 
+        System.out.println("h: " +h);
+        System.out.println("asc: " + asc);
+        System.out.println("diff: " + diff);
+
         //paint selection
         LocationRange selection = model.getSelectionRange();
         Location min = selection.getMin();
@@ -314,9 +318,9 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
             //min from x to end
             g.fillRect(min.x*w, min.y*h + diff, getWidth() - (min.x)*w, h);
             //all full rows
-            g.fillRect(0, (min.y+1)*h, getWidth(), h*(rowDistance-1));
+            g.fillRect(0, (min.y+1)*h + diff, getWidth(), h*(rowDistance-1));
             //last row from 0 to x
-            g.fillRect(0, max.y*w + diff, max.x*w , h );
+            g.fillRect(0, max.y*h + diff, max.x*w , h );
         }
 
         // paint text
