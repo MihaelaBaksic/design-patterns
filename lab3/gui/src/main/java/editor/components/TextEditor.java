@@ -183,13 +183,11 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         model.addTextObserver(this);
         clipboard.addObserver(this);
 
-        deleteAfter = new DeleteAfterAction("Delete",model, undoManager);
-        //deleteAfter.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE));
+        deleteAfter = new DeleteAfterAction("Delete", model, undoManager);
         this.getInputMap().put(KeyStroke.getKeyStroke((char) KeyEvent.VK_DELETE), "deleteKey");
         this.getActionMap().put("deleteKey", deleteAfter);
 
         deleteBefore = new DeleteBeforeAction("Back space", model, undoManager);
-        deleteBefore.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke((char) KeyEvent.VK_BACK_SPACE));
 
         selectLeft = new SelectLeftAction("Select left", model);
         selectRight = new SelectRightAction("Select right", model);
@@ -204,22 +202,13 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         exitAction = new ExitAction("Exit", this);
 
         copyAction = new CopyAction("Copy", model, clipboard);
-        copyAction.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control C"));
-
         cutAction = new CutAction("Cut", model, clipboard, undoManager);
-        cutAction.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control X"));
-
         pasteAction = new PasteAction("Paste", model, clipboard, undoManager);
-        pasteAction.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control V"));
-
         pasteAndTakeAction = new PasteAndTakeAction("Paste and Take", model, clipboard, undoManager);
-        pasteAndTakeAction.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control shift V"));
 
         redoAction = new RedoAction("Redo", undoManager);
-        redoAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control Z"));
-
         undoAction = new UndoAction("Undo", undoManager);
-        undoAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control Y"));
+
 
         this.addKeyListener(new KeyListener() {
             @Override

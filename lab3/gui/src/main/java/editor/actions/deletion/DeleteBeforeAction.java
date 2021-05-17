@@ -6,6 +6,7 @@ import editor.models.TextEditorModel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 public class DeleteBeforeAction extends AbstractAction {
 
@@ -16,6 +17,8 @@ public class DeleteBeforeAction extends AbstractAction {
         super(name);
         this.model = model;
         this.manager = manager;
+
+        this.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke((char) KeyEvent.VK_BACK_SPACE));
     }
 
     @Override

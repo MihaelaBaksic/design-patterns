@@ -15,6 +15,7 @@ public class CopyAction extends AbstractAction {
         super(name);
         this.model = model;
         this.clipboard = clipboard;
+        this.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control C"));
     }
 
     @Override

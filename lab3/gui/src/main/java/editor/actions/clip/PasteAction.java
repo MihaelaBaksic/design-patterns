@@ -19,6 +19,7 @@ public class PasteAction extends AbstractAction {
         this.model = model;
         this.clipboard = clipboard;
         this.manager = manager;
+        this.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control V"));
     }
 
     @Override

@@ -12,6 +12,7 @@ public class RedoAction extends AbstractAction {
     public RedoAction(String name, UndoManager manager){
         super(name);
         this.manager = manager;
+        this.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control Z"));
     }
 
     @Override

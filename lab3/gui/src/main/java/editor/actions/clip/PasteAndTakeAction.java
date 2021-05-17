@@ -19,6 +19,7 @@ public class PasteAndTakeAction extends AbstractAction {
         this.model = model;
         this.clipboard = clipboard;
         this.manager = manager;
+        this.putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke("control shift V"));
     }
 
     @Override
