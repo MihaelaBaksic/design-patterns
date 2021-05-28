@@ -39,7 +39,7 @@ public class Oval extends AbstractGraphicalObject{
 
     @Override
     public GraphicalObject duplicate(){
-        return new Oval(new Point[]{getHotPoint(0), getHotPoint(1), getHotPoint(2)});
+        return new Oval(new Point[]{getHotPoint(0), getHotPoint(1)});
     }
 
     private Point getCenter(){

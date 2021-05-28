@@ -4,8 +4,6 @@ import util.GeometryUtil;
 import util.Point;
 import util.Rectangle;
 
-import java.util.stream.Collectors;
-
 public class LineSegment extends AbstractGraphicalObject{
 
     public LineSegment(){
