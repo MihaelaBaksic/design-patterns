@@ -6,6 +6,8 @@ import render.Renderer;
 import util.Point;
 import util.Rectangle;
 
+import java.util.List;
+
 public class SelectShapeState implements State{
 
     private DocumentModel model;
@@ -32,7 +34,18 @@ public class SelectShapeState implements State{
 
     @Override
     public void mouseDragged(Point mousePoint) {
+        // if there is one selected, get that one
+        System.out.println("Dragged");
+        List<GraphicalObject> selected = model.getSelectedObjects();
+        if(selected.size()==1){
+            GraphicalObject go = selected.get(0);
+            int index =  model.findSelectedHotPoint(go, mousePoint);
+            if(index < 0) return;
 
+            Point selectedHP = go.getHotPoint(index);
+            Point newHP = selectedHP.translate(mousePoint.difference(selectedHP));
+            go.setHotPoint(index, newHP);
+        }
     }
 
     @Override
@@ -65,7 +78,11 @@ public class SelectShapeState implements State{
 
     @Override
     public void onLeaving() {
-
+        System.out.println("Leaving select shape state");
+        List<GraphicalObject> selected = List.copyOf(model.getSelectedObjects());
+        for(GraphicalObject o : selected){
+            o.setSelected(false);
+        }
     }
 
     private void drawRectangle(Renderer r, Rectangle rectangle){

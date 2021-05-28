@@ -34,44 +34,49 @@ public class GUI extends JFrame {
 
 
         JToolBar toolBar = new JToolBar();
-        toolBar.add(new AbstractAction("Selektiraj") {
+        JButton button = new JButton(new AbstractAction("Selektiraj") {
             @Override
             public void actionPerformed(ActionEvent e) {
+                currentState.onLeaving();
                 currentState = new SelectShapeState(model);
                 canvas.setCurrentState(currentState);
             }
         });
+        button.setFocusable(false);
+        toolBar.add(button);
 
         for(GraphicalObject p : prototypes){
-            toolBar.add(new JButton(new AbstractAction(p.getShapeName()) {
+            button = new JButton(new AbstractAction(p.getShapeName()) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    currentState.onLeaving();
                     currentState = new AddShapeState(p, model);
                     canvas.setCurrentState(currentState);
                 }
-            }));
+            });
+            button.setFocusable(false);
+            toolBar.add(button);
         }
 
         cp.add(toolBar, BorderLayout.NORTH);
         cp.add(canvas, BorderLayout.CENTER);
 
-        initKeyListeners();
+        toolBar.setFocusable(false);
+
+        initKeyBindings();
     }
 
-    private void initKeyListeners(){
-
+    private void initKeyBindings(){
         this.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyTyped(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
-                    System.out.println("ESCAPE");
-                    e.consume();
-                    currentState = new IdleState();
-                }
+            public void keyPressed(KeyEvent e) {
+                currentState.onLeaving();
+                currentState = new IdleState();
+                canvas.setCurrentState(currentState);
             }
         });
-
     }
+
 
 
 }
