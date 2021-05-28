@@ -25,4 +25,16 @@ public class Point {
     public Point difference(Point dp){
         return new Point(this.x - dp.getX(), this.y - dp.getY());
     }
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
+
+    public Rectangle getHotPointRectangle(){
+        return new Rectangle(x-10, y-10, 20, 20);
+    }
 }

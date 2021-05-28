@@ -5,6 +5,7 @@ import util.Point;
 import util.Rectangle;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Oval extends AbstractGraphicalObject{
@@ -53,16 +54,21 @@ public class Oval extends AbstractGraphicalObject{
         int width = Math.abs(cX-getHotPoint(0).getX())*2;
         int height = Math.abs(cY-getHotPoint(1).getY())*2;
 
-        List<Point> points = new ArrayList<>();
+        List<Point> pointsTopArch = new ArrayList<>();
+        List<Point> pointsBottomArch = new ArrayList<>();
+
 
         for(int i= 0; i<=width; i++){
             int x = cX - width/2 + i;
             int sq= calcForX(x, width/2, height/2, cX, cY);
-            points.add(new Point(x,cY + sq));
-            points.add(new Point(x, cY - sq));
+            pointsTopArch.add(new Point(x,cY + sq));
+            pointsBottomArch.add(new Point(x, cY - sq));
         }
-
-        r.fillPolygon(points.toArray(new Point[0]));
+        Collections.reverse(pointsBottomArch);
+        pointsTopArch.addAll(pointsBottomArch);
+        System.out.println(pointsTopArch.get(0));
+        System.out.println(pointsTopArch.get(pointsTopArch.size()-1));
+        r.fillPolygon(pointsTopArch.toArray(new Point[0]));
     }
 
     private Point getCenter(){

@@ -108,6 +108,11 @@ public class DocumentModel {
         return roSelectedObjects;
     }
 
+    public void clearSelection(){
+        for(GraphicalObject o : objects)
+            o.setSelected(false);
+    }
+
     // Pomakni predani objekt u listi objekata na jedno mjesto kasnije...
     // Time će se on iscrtati kasnije (pa će time možda veći dio biti vidljiv)
     public void increaseZ(GraphicalObject go) {

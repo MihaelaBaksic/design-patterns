@@ -7,6 +7,7 @@ import util.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AbstractGraphicalObject implements GraphicalObject{
 
@@ -72,8 +73,8 @@ public abstract class AbstractGraphicalObject implements GraphicalObject{
 
     @Override
     public void translate(Point delta) {
-        hotPoints.stream()
-                .map(p -> p.translate(delta));
+        hotPoints = hotPoints.stream()
+                .map(p -> p.translate(delta)).collect(Collectors.toList());
         notifyListeners();
     }
 

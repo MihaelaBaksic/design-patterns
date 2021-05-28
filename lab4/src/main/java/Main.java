@@ -19,7 +19,7 @@ public class Main {
 
             GUI gui = new GUI(objects);
             gui.setVisible(true);
-            gui.setSize(300, 300);
+            gui.setSize(600, 600);
             gui.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         });
 

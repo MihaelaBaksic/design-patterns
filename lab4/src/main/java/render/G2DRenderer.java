@@ -24,6 +24,10 @@ public class G2DRenderer implements Renderer{
         g2D.setColor(Color.BLUE);
         int[] xPoints = Arrays.stream(points).mapToInt(Point::getX).toArray();
         int[] yPoints = Arrays.stream(points).mapToInt(Point::getY).toArray();
+        g2D.fillPolygon(xPoints, yPoints, points.length);
+
+        g2D.setColor(Color.red);
         g2D.drawPolygon(xPoints, yPoints, points.length);
+
     }
 }

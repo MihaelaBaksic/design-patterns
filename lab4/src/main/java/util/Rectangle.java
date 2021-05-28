@@ -25,4 +25,14 @@ public class Rectangle {
     public int getHeight() {
         return height;
     }
+
+    public Point[] getPointsOfRectangle(){
+        Point[] points = new Point[4];
+        points[0] = new Point(x, y);
+        points[1] = new Point(x + width, y);
+        points[2] = new Point(x, y + height);
+        points[3] = new Point(x + width, y + height);
+
+        return points;
+    }
 }
