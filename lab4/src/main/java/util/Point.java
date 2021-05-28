@@ -35,6 +35,6 @@ public class Point {
     }
 
     public Rectangle getHotPointRectangle(){
-        return new Rectangle(x-10, y-10, 20, 20);
+        return new Rectangle(x-2, y-2, 4, 4);
     }
 }

@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import render.Renderer;
 import state.State;
 import util.Point;
+import util.Rectangle;
 
 
 public class Canvas extends JComponent implements DocumentModelListener {
@@ -46,6 +47,7 @@ public class Canvas extends JComponent implements DocumentModelListener {
             currentState.afterDraw(r, o);
         }
         currentState.afterDraw(r);
+
     }
 
     private void initKeyListeners(){

@@ -7,7 +7,10 @@ public class Rectangle {
     private int height;
 
     public Rectangle(int x, int y, int width, int height) {
-        // ...
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
     };
 
     public int getX() {
@@ -30,8 +33,9 @@ public class Rectangle {
         Point[] points = new Point[4];
         points[0] = new Point(x, y);
         points[1] = new Point(x + width, y);
-        points[2] = new Point(x, y + height);
-        points[3] = new Point(x + width, y + height);
+        points[2] = new Point(x + width, y + height);
+        points[3] = new Point(x, y + height);
+
 
         return points;
     }
