@@ -36,6 +36,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -102,7 +105,7 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
         clipboard = new ClipboardStack();
         undoManager = UndoManager.getInstance();
         this.menuBar = new JMenuBar();
-        this.toolBar = new Toolbar();
+        this.toolBar = new JToolBar();
         this.statusBar = new JLabel();
         this.fileManager = FileManager.getInstance();
         init();
@@ -256,8 +259,14 @@ public class TextEditor extends JPanel implements CursorObserver, TextObserver, 
 
         JMenu menuPlugins = new JMenu("Plugins");
 
-        //ServiceLoader<Plugin> plugins = PluginLoader.load();
-        List<Plugin> plugins = PluginLoader.loadPlugins();
+        ClassLoader parent = PluginLoader.class.getClassLoader();
+
+        URLClassLoader pluginClassLoader = new URLClassLoader(
+                new URL[] {
+                        new File("/home/mihaela/Documents/FER/ooup/labosi/designPatternsLab/lab3/plugin.jar").toURI().toURL()
+                }, parent);
+
+        List<Plugin> plugins = PluginLoader.loadPlugins(pluginClassLoader);
         for(var p : plugins){
             JMenuItem item = new JMenuItem(new AbstractAction() {
                 @Override

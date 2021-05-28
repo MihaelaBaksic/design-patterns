@@ -31,7 +31,7 @@ public class Statistics implements Plugin{
         int rows = model.linesNumber();
         int words = model.getLines().stream()
                 .mapToInt(l ->{
-                    return l.strip().split("\s").length;
+                    return l.strip().equals("") ? 0 : l.strip().split("\s").length;
                 }).sum();
         int characters = model.getLines().stream()
                 .mapToInt(l -> {
