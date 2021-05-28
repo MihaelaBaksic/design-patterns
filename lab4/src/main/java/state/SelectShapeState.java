@@ -24,7 +24,8 @@ public class SelectShapeState implements State{
         }
 
         GraphicalObject selected = model.findSelectedGraphicalObject(mousePoint);
-        selected.setSelected(true);
+        if(selected != null)
+            selected.setSelected(true);
     }
 
     @Override

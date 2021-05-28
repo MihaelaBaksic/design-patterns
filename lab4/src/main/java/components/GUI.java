@@ -70,9 +70,11 @@ public class GUI extends JFrame {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                currentState.onLeaving();
-                currentState = new IdleState();
-                canvas.setCurrentState(currentState);
+               if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+                   currentState.onLeaving();
+                   currentState = new IdleState();
+                   canvas.setCurrentState(currentState);
+               }
             }
         });
     }

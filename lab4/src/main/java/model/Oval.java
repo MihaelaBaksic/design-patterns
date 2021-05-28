@@ -1,6 +1,7 @@
 package model;
 
 import render.Renderer;
+import util.GeometryUtil;
 import util.Point;
 import util.Rectangle;
 
@@ -25,7 +26,21 @@ public class Oval extends AbstractGraphicalObject{
 
     @Override
     public double selectionDistance(Point mousePoint){
-        return 0;
+        Rectangle boundingBox = this.getBoundingBox();
+        Point[] bbPoints = boundingBox.getPointsOfRectangle();
+
+        List<Double> distances = new ArrayList<>();
+
+        if(mousePoint.getX() >= bbPoints[0].getX() && mousePoint.getX() <= bbPoints[1].getX() &&
+                mousePoint.getY() >= bbPoints[0].getY() && mousePoint.getY() <= bbPoints[3].getY())
+            return 0;
+
+        distances.add(GeometryUtil.distanceFromLineSegment(bbPoints[0], bbPoints[1], mousePoint));
+        distances.add(GeometryUtil.distanceFromLineSegment(bbPoints[1], bbPoints[2], mousePoint));
+        distances.add(GeometryUtil.distanceFromLineSegment(bbPoints[2], bbPoints[3], mousePoint));
+        distances.add(GeometryUtil.distanceFromLineSegment(bbPoints[3], bbPoints[0], mousePoint));
+
+        return distances.stream().mapToDouble(d -> d).min().getAsDouble();
     }
 
     @Override
@@ -57,7 +72,6 @@ public class Oval extends AbstractGraphicalObject{
         List<Point> pointsTopArch = new ArrayList<>();
         List<Point> pointsBottomArch = new ArrayList<>();
 
-
         for(int i= 0; i<=width; i++){
             int x = cX - width/2 + i;
             int sq= calcForX(x, width/2, height/2, cX, cY);
@@ -66,8 +80,6 @@ public class Oval extends AbstractGraphicalObject{
         }
         Collections.reverse(pointsBottomArch);
         pointsTopArch.addAll(pointsBottomArch);
-        System.out.println(pointsTopArch.get(0));
-        System.out.println(pointsTopArch.get(pointsTopArch.size()-1));
         r.fillPolygon(pointsTopArch.toArray(new Point[0]));
     }
 
