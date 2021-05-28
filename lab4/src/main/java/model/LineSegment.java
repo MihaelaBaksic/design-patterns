@@ -1,5 +1,6 @@
 package model;
 
+import render.Renderer;
 import util.GeometryUtil;
 import util.Point;
 import util.Rectangle;
@@ -38,6 +39,11 @@ public class LineSegment extends AbstractGraphicalObject{
         int height = hotPoints.stream().mapToInt(p -> Math.abs(y - p.getY())).max().getAsInt();
 
         return new Rectangle(x,y,width+1,height+1);
+    }
+
+    @Override
+    public void render(Renderer r){
+        r.drawLine(getHotPoint(0), getHotPoint(1));
     }
 
 }

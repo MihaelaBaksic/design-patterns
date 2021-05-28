@@ -1,10 +1,8 @@
 package model;
 
+import render.Renderer;
 import util.Point;
 import util.Rectangle;
-
-import java.util.Stack;
-import java.util.List;
 
 
 public interface GraphicalObject {
@@ -25,7 +23,7 @@ public interface GraphicalObject {
     double selectionDistance(Point mousePoint);
 
     // Podrška za crtanje (dio mosta)
-    //void render(Renderer r);
+    void render(Renderer r);
 
     // Observer za dojavu promjena modelu
     void addGraphicalObjectListener(GraphicalObjectListener l);

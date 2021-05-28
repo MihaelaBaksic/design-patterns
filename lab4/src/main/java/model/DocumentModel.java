@@ -1,12 +1,9 @@
-package document;
+package model;
 
-import model.GraphicalObject;
-import model.GraphicalObjectListener;
+import util.GeometryUtil;
 import util.Point;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class DocumentModel {
 
@@ -127,7 +124,14 @@ public class DocumentModel {
     // objekt kojemu je najbliža uz uvjet da ta udaljenost nije veća od
     // SELECTION_PROXIMITY. Status selektiranosti objekta ova metoda NE dira.
     public GraphicalObject findSelectedGraphicalObject(Point mousePoint) {
-        return null;
+        GraphicalObject closestObject = objects.stream()
+                .min(Comparator.comparing(o -> o.selectionDistance(mousePoint))).get();
+
+        double distance = closestObject.selectionDistance(mousePoint);
+        if(distance > SELECTION_PROXIMITY)
+            return null;
+
+        return closestObject;
     }
 
     // Pronađi da li u predanom objektu predana točka miša selektira neki hot-point.
@@ -136,7 +140,17 @@ public class DocumentModel {
     // kojeg bi predana točka selektirala ili -1 ako takve nema. Status selekcije
     // se pri tome NE dira.
     public int findSelectedHotPoint(GraphicalObject object, Point mousePoint) {
-        return 0;
+        int index = -1;
+        double minDistance = Double.POSITIVE_INFINITY;
+
+        for(int i=0; i<object.getNumberOfHotPoints(); i++){
+            double distance = GeometryUtil.distanceFromPoint(object.getHotPoint(i), mousePoint);
+            if( distance < minDistance && distance < SELECTION_PROXIMITY){
+                index = i;
+                minDistance = distance;
+            }
+        }
+        return index;
     }
 
 }

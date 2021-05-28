@@ -1,5 +1,6 @@
 package model;
 
+import render.Renderer;
 import util.GeometryUtil;
 import util.Point;
 import util.Rectangle;
@@ -84,6 +85,10 @@ public abstract class AbstractGraphicalObject implements GraphicalObject{
     @Override
     public double selectionDistance(Point mousePoint) {
         return 0;
+    }
+
+    @Override
+    public void render(Renderer r){
     }
 
     @Override

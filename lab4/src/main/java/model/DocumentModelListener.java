@@ -1,4 +1,4 @@
-package document;
+package model;
 
 public interface DocumentModelListener {
 
