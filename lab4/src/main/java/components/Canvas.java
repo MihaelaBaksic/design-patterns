@@ -10,7 +10,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 import render.Renderer;
-import state.IdleState;
 import state.State;
 import util.Point;
 
@@ -24,8 +23,6 @@ public class Canvas extends JComponent implements DocumentModelListener {
         this.model = model;
         this.model.addDocumentModelListener(this);
         this.currentState = currentState;
-        //this.model.addGraphicalObject(new LineSegment(new Point[] {new Point(100, 200), new Point(50, 20)}));
-        //this.model.addGraphicalObject(new Oval(new Point[]{new Point(200, 100), new Point(150, 150)}));
 
         initMouseListeners();
     }

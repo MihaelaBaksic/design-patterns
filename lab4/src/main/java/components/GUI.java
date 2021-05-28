@@ -32,7 +32,6 @@ public class GUI extends JFrame {
 
         this.setContentPane(cp);
 
-
         JToolBar toolBar = new JToolBar();
         JButton button = new JButton(new AbstractAction("Selektiraj") {
             @Override

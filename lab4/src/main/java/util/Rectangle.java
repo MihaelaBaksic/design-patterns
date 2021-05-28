@@ -39,4 +39,14 @@ public class Rectangle {
 
         return points;
     }
+
+    public Rectangle union(Rectangle o){
+        int x_ = Math.min(this.x, o.getY());
+        int y_ = Math.min(this.y, o.getY());
+
+        int width_ = Math.max((this.x - x_ + this.width), (o.x - x_ + o.width));
+        int height_ = Math.max((this.y - y_ + this.height), (o.y - y_ + o.height));
+
+        return new Rectangle(x_, y_, width_, height_);
+    }
 }
