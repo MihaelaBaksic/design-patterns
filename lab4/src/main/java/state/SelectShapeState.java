@@ -1,5 +1,6 @@
 package state;
 
+import model.CompositeShape;
 import model.DocumentModel;
 import model.GraphicalObject;
 import render.Renderer;
@@ -7,6 +8,7 @@ import util.Point;
 import util.Rectangle;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SelectShapeState implements State{
@@ -57,11 +59,10 @@ public class SelectShapeState implements State{
             case KeyEvent.VK_UP: moveSelectionUp(); break;
             case KeyEvent.VK_RIGHT: moveSelectionRight(); break;
             case KeyEvent.VK_LEFT: moveSelectionLeft(); break;
-            case KeyEvent.VK_PLUS: {
-                System.out.println("PLUS");
-                model.moveSelectedForward();
-                break;}
+            case KeyEvent.VK_PLUS: model.moveSelectedForward(); break;
             case KeyEvent.VK_MINUS: model.moveSelectedBackward(); break;
+            case KeyEvent.VK_G: createComposite(); break;
+            case KeyEvent.VK_U: removeComposite(); break;
         }
     }
 
@@ -111,23 +112,54 @@ public class SelectShapeState implements State{
         for( GraphicalObject o : model.getSelectedObjects()){
             o.translate(new Point(0, 1));
         }
+        model.notifyListeners();
     }
 
     private void moveSelectionUp(){
         for( GraphicalObject o : model.getSelectedObjects()){
             o.translate(new Point(0, -1));
         }
+        model.notifyListeners();
     }
 
     private void moveSelectionRight(){
         for( GraphicalObject o : model.getSelectedObjects()){
             o.translate(new Point(1, 0));
         }
+        model.notifyListeners();
     }
 
     private void moveSelectionLeft(){
         for( GraphicalObject o : model.getSelectedObjects()){
             o.translate(new Point(-1, 0));
+        }
+        model.notifyListeners();
+    }
+
+    private void createComposite() {
+        List<GraphicalObject> children = model.getSelectedObjects();
+        GraphicalObject composite = new CompositeShape(children);
+
+        for( GraphicalObject c : new ArrayList<>(children))
+            model.removeGraphicalObject(c);
+
+        composite.setSelected(true);
+        model.addGraphicalObject(composite);
+    }
+
+    private void removeComposite() {
+        // Get selected objects
+        List<GraphicalObject> selected = model.getSelectedObjects();
+        if(selected.size() != 1) return;
+
+        GraphicalObject object = selected.get(0);
+        if( !(object instanceof CompositeShape) ) return;
+
+        // object is composite
+        List<GraphicalObject> children = ((CompositeShape)object).getChildren();
+        model.removeGraphicalObject(object);
+        for( GraphicalObject child : children){
+            model.addGraphicalObject(child);
         }
     }
 

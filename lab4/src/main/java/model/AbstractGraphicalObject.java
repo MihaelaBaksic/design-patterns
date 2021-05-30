@@ -112,11 +112,11 @@ public abstract class AbstractGraphicalObject implements GraphicalObject{
         return null;
     }
 
-    private void notifyListeners(){
+    protected void notifyListeners(){
         listeners.stream().forEach(l -> l.graphicalObjectChanged(this));
     }
 
-    private void notifySelectionListeners(){
+    protected void notifySelectionListeners(){
         listeners.stream().forEach(l -> l.graphicalObjectSelectionChanged(this));
     }
 }

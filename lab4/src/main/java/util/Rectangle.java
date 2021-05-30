@@ -41,7 +41,7 @@ public class Rectangle {
     }
 
     public Rectangle union(Rectangle o){
-        int x_ = Math.min(this.x, o.getY());
+        int x_ = Math.min(this.x, o.getX());
         int y_ = Math.min(this.y, o.getY());
 
         int width_ = Math.max((this.x - x_ + this.width), (o.x - x_ + o.width));

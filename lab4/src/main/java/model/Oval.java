@@ -28,7 +28,6 @@ public class Oval extends AbstractGraphicalObject{
     @Override
     public double selectionDistance(Point mousePoint){
         Point[] bbPoints = getOvalPoints();
-
         return Arrays.stream(bbPoints).mapToDouble( p -> GeometryUtil.distanceFromPoint(p, mousePoint)).min().getAsDouble();
     }
 

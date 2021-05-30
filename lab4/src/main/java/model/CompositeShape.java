@@ -16,9 +16,10 @@ public class CompositeShape implements GraphicalObject{
 
     public CompositeShape(List<GraphicalObject> children){
         super();
-        children = new ArrayList<>();
-        children.addAll(children);
+        this.children = new ArrayList<>();
+        this.children.addAll(children);
         selected = false;
+        listeners = new ArrayList<>();
     }
 
     public List<GraphicalObject> getChildren(){
@@ -33,6 +34,7 @@ public class CompositeShape implements GraphicalObject{
     @Override
     public void setSelected(boolean selected) {
         this.selected = selected;
+        notifySelectionListeners();
     }
 
     @Override
@@ -64,6 +66,7 @@ public class CompositeShape implements GraphicalObject{
         for(GraphicalObject c : children){
             c.translate(delta);
         }
+        notifyListeners();
     }
 
     @Override
@@ -110,5 +113,13 @@ public class CompositeShape implements GraphicalObject{
     @Override
     public GraphicalObject duplicate() {
         return null;
+    }
+
+    protected void notifyListeners(){
+        listeners.stream().forEach(l -> l.graphicalObjectChanged(this));
+    }
+
+    protected void notifySelectionListeners(){
+        listeners.stream().forEach(l -> l.graphicalObjectSelectionChanged(this));
     }
 }

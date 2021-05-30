@@ -4,7 +4,6 @@ import util.GeometryUtil;
 import util.Point;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DocumentModel {
 
@@ -66,9 +65,10 @@ public class DocumentModel {
     public void addGraphicalObject(GraphicalObject obj) {
         obj.addGraphicalObjectListener(goListener);
         objects.add(obj);
-        if(obj.isSelected())
+        if(obj.isSelected()) {
             selectedObjects.add(obj);
-
+            roSelectedObjects = Collections.unmodifiableList(selectedObjects);
+        }
         roObjects = Collections.unmodifiableList(objects);
         notifyListeners();
     }
@@ -77,9 +77,10 @@ public class DocumentModel {
     public void removeGraphicalObject(GraphicalObject obj) {
         obj.removeGraphicalObjectListener(goListener);
         objects.remove(obj);
-        if(obj.isSelected())
+        if(obj.isSelected()) {
             selectedObjects.remove(obj);
-
+            roSelectedObjects = Collections.unmodifiableList(selectedObjects);
+        }
         roObjects = Collections.unmodifiableList(objects);
         notifyListeners();
     }
