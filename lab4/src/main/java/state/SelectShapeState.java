@@ -138,6 +138,8 @@ public class SelectShapeState implements State{
 
     private void createComposite() {
         List<GraphicalObject> children = model.getSelectedObjects();
+        if(children == null || children.size()==0) return;
+
         GraphicalObject composite = new CompositeShape(children);
 
         for( GraphicalObject c : new ArrayList<>(children))

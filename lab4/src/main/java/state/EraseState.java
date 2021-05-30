@@ -3,7 +3,6 @@ package state;
 import model.DocumentModel;
 import model.GraphicalObject;
 import render.Renderer;
-import util.GeometryUtil;
 import util.Point;
 
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ public class EraseState implements State{
 
         new ArrayList<>(objects).stream().filter( o -> {
             double distance = points.stream().mapToDouble( p -> o.selectionDistance(p)).min().getAsDouble();
-            return distance < 2;
+            return distance < 1;
         }).forEach( o -> model.removeGraphicalObject(o));
 
         points.clear();
@@ -48,9 +47,7 @@ public class EraseState implements State{
     public void keyPressed(int keyCode) {}
 
     @Override
-    public void afterDraw(Renderer r, GraphicalObject go) {
-
-    }
+    public void afterDraw(Renderer r, GraphicalObject go) {}
 
     @Override
     public void afterDraw(Renderer r) {

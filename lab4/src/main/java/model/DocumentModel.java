@@ -131,14 +131,19 @@ public class DocumentModel {
     // objekt kojemu je najbliža uz uvjet da ta udaljenost nije veća od
     // SELECTION_PROXIMITY. Status selektiranosti objekta ova metoda NE dira.
     public GraphicalObject findSelectedGraphicalObject(Point mousePoint) {
-        GraphicalObject closestObject = objects.stream()
-                .min(Comparator.comparing(o -> o.selectionDistance(mousePoint))).get();
+        try {
+            GraphicalObject closestObject = objects.stream()
+                    .min(Comparator.comparing(o -> o.selectionDistance(mousePoint))).get();
 
-        double distance = closestObject.selectionDistance(mousePoint);
-        if(distance > SELECTION_PROXIMITY)
+            double distance = closestObject.selectionDistance(mousePoint);
+            if(distance > SELECTION_PROXIMITY)
+                return null;
+
+            return closestObject;
+        }
+        catch (NoSuchElementException e){
             return null;
-
-        return closestObject;
+        }
     }
 
     // Pronađi da li u predanom objektu predana točka miša selektira neki hot-point.
