@@ -7,11 +7,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SVGRenderer implements Renderer{
 
-    private List<String> lines = new ArrayList<>();
+    private List<String> lines;
     private String fileName;
 
     public SVGRenderer(String fileName) {
@@ -19,7 +21,9 @@ public class SVGRenderer implements Renderer{
         // <svg xmlns=... >
         // ...
         this.fileName = fileName;
-        String header = "<svg xmlns= >";
+        lines = new ArrayList<>();
+        String header = "<svg height=\"600\" width=\"600\">";
+        lines.add(header);
     }
 
     public void close() throws IOException {
@@ -35,13 +39,15 @@ public class SVGRenderer implements Renderer{
 
     @Override
     public void drawLine(Point s, Point e) {
-        String line = "<line>";
+        String line = "<line x1=\"" + s.getX() +"\" y1=\"" + s.getY() +"\" x2=\"" + e.getX() + "\" y2=\"" + e.getY() +"\" style=\"stroke:rgb(0,0,255);stroke-width:1\" />";
         lines.add(line);
 
     }
 
     @Override
     public void fillPolygon(Point[] points) {
-
+        String pointStr = String.join(" ", Arrays.stream(points).map( p -> (p.getX() + "," + p.getY())).collect(Collectors.toList()));
+        String line = "<polygon points=\"" + pointStr + "\" style=\"fill:blue;stroke:red;stroke-width:1\" /> ";
+        lines.add(line);
     }
 }

@@ -6,6 +6,7 @@ import util.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class CompositeShape implements GraphicalObject{
@@ -113,6 +114,24 @@ public class CompositeShape implements GraphicalObject{
     @Override
     public GraphicalObject duplicate() {
         return null;
+    }
+
+    @Override
+    public String getShapeID() {
+        return "@COMP";
+    }
+
+    @Override
+    public void load(Stack<GraphicalObject> stack, String data) {
+
+    }
+
+    @Override
+    public void save(List<String> rows) {
+        for(GraphicalObject o : children)
+            o.save(rows);
+
+        rows.add(String.format("%s %d", getShapeID(), children.size()));
     }
 
     protected void notifyListeners(){

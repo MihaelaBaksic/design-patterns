@@ -5,10 +5,7 @@ import util.GeometryUtil;
 import util.Point;
 import util.Rectangle;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Oval extends AbstractGraphicalObject{
 
@@ -55,6 +52,22 @@ public class Oval extends AbstractGraphicalObject{
     @Override
     public GraphicalObject duplicate(){
         return new Oval(new Point[]{getHotPoint(0), getHotPoint(1)});
+    }
+
+    @Override
+    public String getShapeID() {
+        return "@OVAL";
+    }
+
+    @Override
+    public void load(Stack<GraphicalObject> stack, String data) {
+
+    }
+
+    @Override
+    public void save(List<String> rows) {
+        rows.add(String.format("%s %d %d %d", getShapeID(),getHotPoint(0).getX(), getHotPoint(0).getY(),
+                getHotPoint(1).getX(), getHotPoint(1).getY()));
     }
 
     @Override

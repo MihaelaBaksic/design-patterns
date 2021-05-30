@@ -4,6 +4,9 @@ import render.Renderer;
 import util.Point;
 import util.Rectangle;
 
+import java.util.List;
+import java.util.Stack;
+
 
 public interface GraphicalObject {
 
@@ -34,7 +37,7 @@ public interface GraphicalObject {
     GraphicalObject duplicate();
 
     // Podrška za snimanje i učitavanje
-    //String getShapeID();
-    //void load(Stack<GraphicalObject> stack, String data);
-    //void save(List<String> rows);
+    String getShapeID();
+    void load(Stack<GraphicalObject> stack, String data);
+    void save(List<String> rows);
 }

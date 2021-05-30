@@ -2,6 +2,7 @@ package components;
 
 import model.DocumentModel;
 import model.GraphicalObject;
+import render.SVGRenderer;
 import state.*;
 
 import javax.swing.*;
@@ -9,6 +10,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GUI extends JFrame {
@@ -30,6 +36,70 @@ public class GUI extends JFrame {
         this.setContentPane(cp);
 
         JToolBar toolBar = new JToolBar();
+
+        JButton buttonSVG = new JButton(new AbstractAction("SVG Export") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+
+                int returnVal = chooser.showOpenDialog(null);
+
+                if(returnVal==JFileChooser.APPROVE_OPTION){
+                    File f = chooser.getSelectedFile();
+                    SVGRenderer svgRenderer = new SVGRenderer(f.getAbsolutePath());
+
+                    for(GraphicalObject o : model.list()){
+                        o.render(svgRenderer);
+                    }
+                    try {
+                        svgRenderer.close();
+                    } catch (IOException exception) {
+                        exception.printStackTrace();
+                        return;
+                    }
+                }
+                else
+                    return;
+            }
+        });
+        buttonSVG.setFocusable(false);
+        toolBar.add(buttonSVG);
+
+        JButton saveButton = new JButton(new AbstractAction("Pohrani") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+
+                int returnVal = chooser.showOpenDialog(null);
+
+                if(returnVal==JFileChooser.APPROVE_OPTION){
+                    File f = chooser.getSelectedFile();
+
+                    try {
+                        BufferedWriter w = new BufferedWriter(new FileWriter(f));
+                        List<String> rows = new ArrayList<>();
+                        for( GraphicalObject o : model.list()){
+                            o.save(rows);
+                        }
+
+                        for(String s : rows){
+                            w.write(s);
+                            w.newLine();
+                        }
+                        w.close();
+                    }
+                    catch (Exception exception){
+                        return;
+                    }
+                }
+                else
+                    return;
+            }
+        });
+        saveButton.setFocusable(false);
+        toolBar.add(saveButton);
+
+
         JButton buttonSelect = new JButton(new AbstractAction("Selektiraj") {
             @Override
             public void actionPerformed(ActionEvent e) {
