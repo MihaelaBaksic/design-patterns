@@ -2,10 +2,7 @@ package components;
 
 import model.DocumentModel;
 import model.GraphicalObject;
-import state.AddShapeState;
-import state.IdleState;
-import state.SelectShapeState;
-import state.State;
+import state.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,11 +30,22 @@ public class GUI extends JFrame {
         this.setContentPane(cp);
 
         JToolBar toolBar = new JToolBar();
-        JButton button = new JButton(new AbstractAction("Selektiraj") {
+        JButton buttonSelect = new JButton(new AbstractAction("Selektiraj") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 currentState.onLeaving();
                 currentState = new SelectShapeState(model);
+                canvas.setCurrentState(currentState);
+            }
+        });
+        buttonSelect.setFocusable(false);
+        toolBar.add(buttonSelect);
+
+        JButton button = new JButton(new AbstractAction("Brisalo") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentState.onLeaving();
+                currentState = new EraseState(model);
                 canvas.setCurrentState(currentState);
             }
         });
