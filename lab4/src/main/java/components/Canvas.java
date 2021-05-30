@@ -71,4 +71,11 @@ public class Canvas extends JComponent implements DocumentModelListener {
     public void documentChange() {
         repaint();
     }
+
+    public void keyPressed(int keyCode){
+        currentState.keyPressed(keyCode);
+    }
+
+
+
 }

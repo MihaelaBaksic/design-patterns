@@ -74,6 +74,9 @@ public class GUI extends JFrame {
                    currentState = new IdleState();
                    canvas.setCurrentState(currentState);
                }
+               else{
+                   canvas.keyPressed(e.getKeyCode());
+               }
             }
         });
     }

@@ -4,6 +4,7 @@ import util.GeometryUtil;
 import util.Point;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DocumentModel {
 
@@ -156,6 +157,31 @@ public class DocumentModel {
             }
         }
         return index;
+    }
+
+    public void moveSelectedBackward(){
+        for(GraphicalObject selected : selectedObjects){
+            int index = objects.indexOf(selected);
+            if(index == 0) continue;
+            objects.add(index-1, selected);
+            objects.remove(index+1);
+        }
+
+        roObjects = Collections.unmodifiableList(objects);
+        notifyListeners();
+    }
+
+    public void moveSelectedForward(){
+        System.out.println("MINUS");
+        for(GraphicalObject selected : selectedObjects){
+            int index = objects.indexOf(selected);
+            if(index == objects.size()-1) continue;
+            objects.add(index + 2, selected);
+            objects.remove(index);
+        }
+
+        roObjects = Collections.unmodifiableList(objects);
+        notifyListeners();
     }
 
 }

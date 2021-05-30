@@ -6,6 +6,7 @@ import util.Point;
 import util.Rectangle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,21 +27,9 @@ public class Oval extends AbstractGraphicalObject{
 
     @Override
     public double selectionDistance(Point mousePoint){
-        Rectangle boundingBox = this.getBoundingBox();
-        Point[] bbPoints = boundingBox.getPointsOfRectangle();
+        Point[] bbPoints = getOvalPoints();
 
-        List<Double> distances = new ArrayList<>();
-
-        if(mousePoint.getX() >= bbPoints[0].getX() && mousePoint.getX() <= bbPoints[1].getX() &&
-                mousePoint.getY() >= bbPoints[0].getY() && mousePoint.getY() <= bbPoints[3].getY())
-            return 0;
-
-        distances.add(GeometryUtil.distanceFromLineSegment(bbPoints[0], bbPoints[1], mousePoint));
-        distances.add(GeometryUtil.distanceFromLineSegment(bbPoints[1], bbPoints[2], mousePoint));
-        distances.add(GeometryUtil.distanceFromLineSegment(bbPoints[2], bbPoints[3], mousePoint));
-        distances.add(GeometryUtil.distanceFromLineSegment(bbPoints[3], bbPoints[0], mousePoint));
-
-        return distances.stream().mapToDouble(d -> d).min().getAsDouble();
+        return Arrays.stream(bbPoints).mapToDouble( p -> GeometryUtil.distanceFromPoint(p, mousePoint)).min().getAsDouble();
     }
 
     @Override
@@ -62,6 +51,19 @@ public class Oval extends AbstractGraphicalObject{
 
     @Override
     public void render(Renderer r){
+        Point[] points = getOvalPoints();
+        r.fillPolygon(points);
+    }
+
+    private Point getCenter(){
+        return new Point(getHotPoint(1).getX(), getHotPoint(0).getY());
+    }
+
+    private int calcForX(int x, int a, int b, int cX, int cY){
+        return (int) (b*Math.sqrt((1 - ((double)(x-cX)*(x-cX) / (double) (a*a)))));
+    }
+
+    private Point[] getOvalPoints(){
         Point center = getCenter();
         int cX = center.getX();
         int cY = center.getY();
@@ -80,14 +82,6 @@ public class Oval extends AbstractGraphicalObject{
         }
         Collections.reverse(pointsBottomArch);
         pointsTopArch.addAll(pointsBottomArch);
-        r.fillPolygon(pointsTopArch.toArray(new Point[0]));
-    }
-
-    private Point getCenter(){
-        return new Point(getHotPoint(1).getX(), getHotPoint(0).getY());
-    }
-
-    private int calcForX(int x, int a, int b, int cX, int cY){
-        return (int) (b*Math.sqrt((1 - ((double)(x-cX)*(x-cX) / (double) (a*a)))));
+        return pointsTopArch.toArray(new Point[0]);
     }
 }

@@ -6,6 +6,7 @@ import render.Renderer;
 import util.Point;
 import util.Rectangle;
 
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 public class SelectShapeState implements State{
@@ -51,7 +52,17 @@ public class SelectShapeState implements State{
 
     @Override
     public void keyPressed(int keyCode) {
-
+        switch (keyCode){
+            case KeyEvent.VK_DOWN: moveSelectionDown(); break;
+            case KeyEvent.VK_UP: moveSelectionUp(); break;
+            case KeyEvent.VK_RIGHT: moveSelectionRight(); break;
+            case KeyEvent.VK_LEFT: moveSelectionLeft(); break;
+            case KeyEvent.VK_PLUS: {
+                System.out.println("PLUS");
+                model.moveSelectedForward();
+                break;}
+            case KeyEvent.VK_MINUS: model.moveSelectedBackward(); break;
+        }
     }
 
     @Override
@@ -94,5 +105,31 @@ public class SelectShapeState implements State{
         r.drawLine(bbPoints[2], bbPoints[3]);
         r.drawLine(bbPoints[3], bbPoints[0]);
     }
+
+
+    private void moveSelectionDown(){
+        for( GraphicalObject o : model.getSelectedObjects()){
+            o.translate(new Point(0, 1));
+        }
+    }
+
+    private void moveSelectionUp(){
+        for( GraphicalObject o : model.getSelectedObjects()){
+            o.translate(new Point(0, -1));
+        }
+    }
+
+    private void moveSelectionRight(){
+        for( GraphicalObject o : model.getSelectedObjects()){
+            o.translate(new Point(1, 0));
+        }
+    }
+
+    private void moveSelectionLeft(){
+        for( GraphicalObject o : model.getSelectedObjects()){
+            o.translate(new Point(-1, 0));
+        }
+    }
+
 
 }
