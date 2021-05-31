@@ -119,11 +119,25 @@ public class DocumentModel {
     // Time će se on iscrtati kasnije (pa će time možda veći dio biti vidljiv)
     public void increaseZ(GraphicalObject go) {
 
+        int index = objects.indexOf(go);
+        if(index == objects.size()-1) return;
+        objects.add(index + 2, go);
+        objects.remove(index);
+
+        roObjects = Collections.unmodifiableList(objects);
+        notifyListeners();
     }
 
     // Pomakni predani objekt u listi objekata na jedno mjesto ranije...
     public void decreaseZ(GraphicalObject go) {
 
+        int index = objects.indexOf(go);
+        if(index == 0) return;
+        objects.add(index-1, go);
+        objects.remove(index+1);
+
+        roObjects = Collections.unmodifiableList(objects);
+        notifyListeners();
     }
 
     // Pronađi postoji li u modelu neki objekt koji klik na točku koja je
@@ -165,29 +179,7 @@ public class DocumentModel {
         return index;
     }
 
-    public void moveSelectedBackward(){
-        for(GraphicalObject selected : selectedObjects){
-            int index = objects.indexOf(selected);
-            if(index == 0) continue;
-            objects.add(index-1, selected);
-            objects.remove(index+1);
-        }
 
-        roObjects = Collections.unmodifiableList(objects);
-        notifyListeners();
-    }
 
-    public void moveSelectedForward(){
-        System.out.println("MINUS");
-        for(GraphicalObject selected : selectedObjects){
-            int index = objects.indexOf(selected);
-            if(index == objects.size()-1) continue;
-            objects.add(index + 2, selected);
-            objects.remove(index);
-        }
-
-        roObjects = Collections.unmodifiableList(objects);
-        notifyListeners();
-    }
 
 }

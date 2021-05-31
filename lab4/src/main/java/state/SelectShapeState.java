@@ -37,8 +37,6 @@ public class SelectShapeState implements State{
 
     @Override
     public void mouseDragged(Point mousePoint) {
-        // if there is one selected, get that one
-        System.out.println("Dragged");
         List<GraphicalObject> selected = model.getSelectedObjects();
         if(selected.size()==1){
             GraphicalObject go = selected.get(0);
@@ -58,8 +56,8 @@ public class SelectShapeState implements State{
             case KeyEvent.VK_UP: moveSelectionUp(); break;
             case KeyEvent.VK_RIGHT: moveSelectionRight(); break;
             case KeyEvent.VK_LEFT: moveSelectionLeft(); break;
-            case KeyEvent.VK_PLUS: model.moveSelectedForward(); break;
-            case KeyEvent.VK_MINUS: model.moveSelectedBackward(); break;
+            case KeyEvent.VK_PLUS: moveSelectedForward(); break;
+            case KeyEvent.VK_MINUS: moveSelectedBackward(); break;
             case KeyEvent.VK_G: createComposite(); break;
             case KeyEvent.VK_U: removeComposite(); break;
         }
@@ -160,6 +158,24 @@ public class SelectShapeState implements State{
         model.removeGraphicalObject(object);
         for( GraphicalObject child : children){
             model.addGraphicalObject(child);
+        }
+    }
+
+    private void moveSelectedForward(){
+
+        List<GraphicalObject> selectedObjects = model.getSelectedObjects();
+
+        for(GraphicalObject selected : selectedObjects){
+            model.increaseZ(selected);
+        }
+
+    }
+
+    private void moveSelectedBackward(){
+        List<GraphicalObject> selectedObjects = model.getSelectedObjects();
+
+        for(GraphicalObject selected : selectedObjects){
+            model.decreaseZ(selected);
         }
     }
 
