@@ -1,20 +1,20 @@
 package components;
 
+import model.CompositeShape;
 import model.DocumentModel;
+import model.DocumentModelListener;
 import model.GraphicalObject;
+import render.G2DRenderer;
+import render.Renderer;
 import render.SVGRenderer;
 import state.*;
+import util.Point;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.awt.event.*;
+import java.io.*;
+import java.util.*;
 import java.util.List;
 
 public class GUI extends JFrame {
@@ -28,7 +28,7 @@ public class GUI extends JFrame {
         prototypes = objectList;
         model = new DocumentModel();
         currentState = new IdleState();
-        canvas = new Canvas(model, currentState);
+        canvas = new Canvas(model);
 
         JPanel cp = new JPanel();
         cp.setLayout(new BorderLayout());
@@ -55,11 +55,8 @@ public class GUI extends JFrame {
                         svgRenderer.close();
                     } catch (IOException exception) {
                         exception.printStackTrace();
-                        return;
                     }
                 }
-                else
-                    return;
             }
         });
         buttonSVG.setFocusable(false);
@@ -88,16 +85,55 @@ public class GUI extends JFrame {
                         }
                         w.close();
                     }
-                    catch (Exception exception){
-                        return;
-                    }
+                    catch (Exception exception) {}
                 }
-                else
-                    return;
             }
         });
         saveButton.setFocusable(false);
         toolBar.add(saveButton);
+
+
+        JButton loadButton = new JButton(new AbstractAction("Učitaj") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+
+                int returnVal = chooser.showOpenDialog(null);
+
+                if(returnVal==JFileChooser.APPROVE_OPTION){
+                    File f = chooser.getSelectedFile();
+
+                    try {
+                        BufferedReader w = new BufferedReader(new FileReader(f));
+                        Stack<GraphicalObject> objects = new Stack<>();
+
+                        Map<String, GraphicalObject> loaders = new HashMap<>();
+                        for(GraphicalObject o : prototypes){
+                            loaders.put(o.getShapeID(), o);
+                        }
+                        loaders.put("@COMP", new CompositeShape());
+
+                        w.lines().forEach( l -> {
+                                try{
+                                    String[] args = l.strip().split(" ");
+                                    loaders.get(args[0]).load(objects,l);
+                                }
+                                catch (Exception exception){
+                                    exception.printStackTrace();
+                                }
+                        });
+
+                        while(!objects.empty())
+                            model.addGraphicalObject(objects.pop());
+
+                        w.close();
+                    }
+                    catch (Exception exception) {}
+                }
+            }
+        });
+        loadButton.setFocusable(false);
+        toolBar.add(loadButton);
 
 
         JButton buttonSelect = new JButton(new AbstractAction("Selektiraj") {
@@ -105,7 +141,6 @@ public class GUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 currentState.onLeaving();
                 currentState = new SelectShapeState(model);
-                canvas.setCurrentState(currentState);
             }
         });
         buttonSelect.setFocusable(false);
@@ -116,7 +151,6 @@ public class GUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 currentState.onLeaving();
                 currentState = new EraseState(model);
-                canvas.setCurrentState(currentState);
             }
         });
         button.setFocusable(false);
@@ -128,7 +162,6 @@ public class GUI extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     currentState.onLeaving();
                     currentState = new AddShapeState(p, model);
-                    canvas.setCurrentState(currentState);
                 }
             });
             button.setFocusable(false);
@@ -150,7 +183,6 @@ public class GUI extends JFrame {
                if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
                    currentState.onLeaving();
                    currentState = new IdleState();
-                   canvas.setCurrentState(currentState);
                }
                else{
                    canvas.keyPressed(e.getKeyCode());
@@ -159,6 +191,63 @@ public class GUI extends JFrame {
         });
     }
 
+
+    class Canvas extends JComponent implements DocumentModelListener {
+
+        private DocumentModel model;
+
+        public Canvas(DocumentModel model){
+            this.model = model;
+            this.model.addDocumentModelListener(this);
+
+            initMouseListeners();
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
+            Graphics2D g2d = (Graphics2D)g;
+            Renderer r = new G2DRenderer(g2d);
+
+            for(GraphicalObject o : model.list()){
+                o.render(r);
+                currentState.afterDraw(r, o);
+            }
+            currentState.afterDraw(r);
+
+        }
+
+
+        private void initMouseListeners(){
+            MouseAdapter mouseAdapter = new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    currentState.mouseDown(new util.Point(e.getX(), e.getY()), e.isShiftDown(), e.isControlDown());
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    currentState.mouseUp(new util.Point(e.getX(), e.getY()), e.isShiftDown(), e.isControlDown());
+                }
+
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    currentState.mouseDragged(new Point(e.getX(), e.getY()));
+                }
+            };
+            this.addMouseListener(mouseAdapter);
+            this.addMouseMotionListener(mouseAdapter);
+        }
+
+        @Override
+        public void documentChange() {
+            repaint();
+        }
+
+        public void keyPressed(int keyCode){
+            currentState.keyPressed(keyCode);
+        }
+
+    }
 
 
 }

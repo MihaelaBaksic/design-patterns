@@ -21,7 +21,6 @@ public class SelectShapeState implements State{
 
     @Override
     public void mouseDown(Point mousePoint, boolean shiftDown, boolean ctrlDown) {
-        System.out.println("SELEKTIRAJ");
         if(!ctrlDown){
             model.clearSelection();
         }
@@ -91,7 +90,6 @@ public class SelectShapeState implements State{
 
     @Override
     public void onLeaving() {
-        System.out.println("Leaving select shape state");
         List<GraphicalObject> selected = List.copyOf(model.getSelectedObjects());
         for(GraphicalObject o : selected){
             o.setSelected(false);

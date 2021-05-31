@@ -1,11 +1,14 @@
 import components.GUI;
+import model.CompositeShape;
 import model.GraphicalObject;
 import model.LineSegment;
 import model.Oval;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
 

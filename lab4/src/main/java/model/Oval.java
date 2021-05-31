@@ -61,12 +61,21 @@ public class Oval extends AbstractGraphicalObject{
 
     @Override
     public void load(Stack<GraphicalObject> stack, String data) {
+        String[] args = data.strip().split(" ");
+        if(!args[0].equals("@OVAL")) return;
+        try{
+            GraphicalObject object = new Oval(new Point[] { new Point(Integer.parseInt(args[1]), Integer.parseInt(args[2])),
+                    new Point(Integer.parseInt(args[3]), Integer.parseInt(args[4]))});
 
+            stack.push(object);
+        }catch (IndexOutOfBoundsException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void save(List<String> rows) {
-        rows.add(String.format("%s %d %d %d", getShapeID(),getHotPoint(0).getX(), getHotPoint(0).getY(),
+        rows.add(String.format("%s %d %d %d %d", getShapeID(),getHotPoint(0).getX(), getHotPoint(0).getY(),
                 getHotPoint(1).getX(), getHotPoint(1).getY()));
     }
 

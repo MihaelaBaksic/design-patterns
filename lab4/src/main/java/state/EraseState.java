@@ -7,6 +7,7 @@ import util.Point;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class EraseState implements State{
 
@@ -29,8 +30,13 @@ public class EraseState implements State{
         List<GraphicalObject> objects = model.list();
 
         new ArrayList<>(objects).stream().filter( o -> {
-            double distance = points.stream().mapToDouble( p -> o.selectionDistance(p)).min().getAsDouble();
-            return distance < 1;
+            try{
+                double distance = points.stream().mapToDouble( p -> o.selectionDistance(p)).min().getAsDouble();
+                return distance < 1;
+            }
+            catch (NoSuchElementException e){
+                return false;
+            }
         }).forEach( o -> model.removeGraphicalObject(o));
 
         points.clear();

@@ -5,6 +5,7 @@ import util.Point;
 import util.Rectangle;
 
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -21,6 +22,15 @@ public class CompositeShape implements GraphicalObject{
         this.children.addAll(children);
         selected = false;
         listeners = new ArrayList<>();
+    }
+
+    public CompositeShape(){
+        this(new ArrayList<>());
+    }
+
+    public void setChildren(List<GraphicalObject> children){
+        this.children = new ArrayList<>();
+        this.children.addAll(children);
     }
 
     public List<GraphicalObject> getChildren(){
@@ -123,7 +133,18 @@ public class CompositeShape implements GraphicalObject{
 
     @Override
     public void load(Stack<GraphicalObject> stack, String data) {
+        String[] args = data.strip().split(" ");
+        if(!args[0].equals("@COMP")) return;
+        try{
+            int numberOfChildren = Integer.parseInt(args[1]);
+            List<GraphicalObject> children = new ArrayList<>();
+            for(int i=0; i<numberOfChildren; i++)
+                children.add(stack.pop());
 
+            stack.push(new CompositeShape(children));
+        }catch (IndexOutOfBoundsException | EmptyStackException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
