@@ -38,8 +38,11 @@ public class LineSegment extends AbstractGraphicalObject{
         String[] args = data.strip().split(" ");
         if(!args[0].equals("@LINE")) return;
         try{
-            GraphicalObject object = new LineSegment(new Point[] { new Point(Integer.parseInt(args[1]), Integer.parseInt(args[2])),
-                    new Point(Integer.parseInt(args[3]), Integer.parseInt(args[4]))});
+            GraphicalObject object = this.duplicate();
+            Point[] hp = new Point[] { new Point(Integer.parseInt(args[1]), Integer.parseInt(args[2])),
+                    new Point(Integer.parseInt(args[3]), Integer.parseInt(args[4]))};
+            object.setHotPoint(0, hp[0]);
+            object.setHotPoint(1, hp[1]);
 
             stack.push(object);
         }catch (IndexOutOfBoundsException e){

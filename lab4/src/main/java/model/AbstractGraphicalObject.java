@@ -5,7 +5,9 @@ import util.GeometryUtil;
 import util.Point;
 import util.Rectangle;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +21,9 @@ public abstract class AbstractGraphicalObject implements GraphicalObject{
     private List<GraphicalObjectListener> listeners;
 
     public AbstractGraphicalObject(Point... points){
-        hotPoints = List.of(points);
+        hotPoints = new ArrayList<>();
+        for(var p : points)
+            hotPoints.add(p);
         hotPointSelected = new ArrayList<>();
         for(int i=0; i<points.length; i++){
             hotPointSelected.add(false);

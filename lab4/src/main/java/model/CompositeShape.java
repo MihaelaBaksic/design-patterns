@@ -123,7 +123,7 @@ public class CompositeShape implements GraphicalObject{
 
     @Override
     public GraphicalObject duplicate() {
-        return null;
+        return new CompositeShape();
     }
 
     @Override
@@ -141,7 +141,10 @@ public class CompositeShape implements GraphicalObject{
             for(int i=0; i<numberOfChildren; i++)
                 children.add(stack.pop());
 
-            stack.push(new CompositeShape(children));
+            CompositeShape object = (CompositeShape) this.duplicate();
+            object.setChildren(children);
+
+            stack.push(object);
         }catch (IndexOutOfBoundsException | EmptyStackException e){
             e.printStackTrace();
         }
